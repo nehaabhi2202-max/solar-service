@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Book a Service - Solar Service</title>
+
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
+
+</head>
+
+
+<body>
+
+<div class="app">
+
+    <!-- ========================= -->
+    <!-- HEADER -->
+    <!-- ========================= -->
+
+    <div class="logo">
+        🔧 Book a Service
+    </div>
+
+    <p class="subtitle">
+        Tell us what service you need
+    </p>
+
+
+    <!-- ========================= -->
+    <!-- BOOKING FORM -->
+    <!-- ========================= -->
+
+    <form
+        class="card"
+        id="serviceForm"
+    >
+
+        <label for="name">
+            Customer Name
+        </label>
+
+        <input
+            type="text"
+            id="name"
+            placeholder="Enter your name"
+            required
+        >
+
+
+        <label for="phone">
+            Phone Number
+        </label>
+
+        <input
+            type="tel"
+            id="phone"
+            placeholder="Enter 10-digit phone number"
+            maxlength="10"
+            required
+        >
+
+
+        <label for="service">
+            Service Type
+        </label>
+
+        <select
+            id="service"
+            required
+        >
+
+            <option value="">
+                Select a service
+            </option>
+
+            <option value="Solar Panel Cleaning">
+                Solar Panel Cleaning
+            </option>
+
+            <option value="Solar Panel Repair">
+                Solar Panel Repair
+            </option>
+
+            <option value="Solar Installation">
+                Solar Installation
+            </option>
+
+            <option value="Inverter Service">
+                Inverter Service
+            </option>
+
+            <option value="Battery Service">
+                Battery Service
+            </option>
+
+            <option value="Other">
+                Other
+            </option>
+
+        </select>
+
+
+        <label for="address">
+            Service Address
+        </label>
+
+        <textarea
+            id="address"
+            placeholder="Enter your complete address"
+            required
+        ></textarea>
+
+
+        <button type="submit">
+            ☀️ Submit Service Request
+        </button>
+
+    </form>
+
+
+    <!-- ========================= -->
+    <!-- SUCCESS BOX -->
+    <!-- ========================= -->
+
+    <div
+        class="card"
+        id="successBox"
+        style="display:none; text-align:center;"
+    >
+
+        <h2>
+            ✅ Request Submitted!
+        </h2>
+
+        <p>
+            Your solar service request has been
+            successfully submitted.
+        </p>
+
+
+        <!-- BOOKING ID -->
+
+        <div
+            style="
+                background:#fff3cd;
+                padding:18px;
+                border-radius:12px;
+                margin:20px 0;
+            "
+        >
+
+            <p style="margin:0;">
+                Your Booking ID
+            </p>
+
+            <h2
+                id="bookingId"
+                style="margin:8px 0;"
+            >
+                -
+            </h2>
+
+        </div>
+
+
+        <p>
+            Please save this Booking ID for
+            future reference.
+        </p>
+
+
+        <!-- CUSTOMER DETAILS -->
+
+        <div
+            style="
+                background:#f1f8f3;
+                padding:18px;
+                border-radius:12px;
+                margin:20px 0;
+                text-align:left;
+            "
+        >
+
+            <p>
+                👤
+                <strong>Customer:</strong>
+                <span id="successName">-</span>
+            </p>
+
+            <p>
+                📱
+                <strong>Phone:</strong>
+                <span id="successPhone">-</span>
+            </p>
+
+            <p>
+                🔧
+                <strong>Service:</strong>
+                <span id="successService">-</span>
+            </p>
+
+            <p>
+                📍
+                <strong>Address:</strong>
+                <span id="successAddress">-</span>
+            </p>
+
+            <p>
+                📌
+                <strong>Status:</strong>
+
+                <span
+                    style="
+                        color:#f39c12;
+                        font-weight:bold;
+                    "
+                >
+                    Pending
+                </span>
+
+            </p>
+
+        </div>
+
+
+        <!-- TRACK BOOKING -->
+
+        <button
+            onclick="trackBooking()"
+        >
+            🔎 Track This Booking
+        </button>
+
+
+        <!-- MY SERVICES -->
+
+        <button
+            onclick="
+                window.location.href='my-services.html'
+            "
+        >
+            📋 View My Services
+        </button>
+
+
+        <!-- WHATSAPP -->
+
+        <button
+            onclick="contactWhatsApp()"
+        >
+            💬 WhatsApp Support
+        </button>
+
+
+        <!-- HOME -->
+
+        <button
+            onclick="
+                window.location.href='index.html'
+            "
+        >
+            🏠 Back to Home
+        </button>
+
+    </div>
+
+</div>
+
+
+<script>
+
+
+// ==========================================
+// ELEMENTS
+// ==========================================
+
+const form =
+    document.getElementById("serviceForm");
+
+const successBox =
+    document.getElementById("successBox");
+
+const bookingIdElement =
+    document.getElementById("bookingId");
+
+const successName =
+    document.getElementById("successName");
+
+const successPhone =
+    document.getElementById("successPhone");
+
+const successService =
+    document.getElementById("successService");
+
+const successAddress =
+    document.getElementById("successAddress");
+
+
+// ==========================================
+// SUBMIT BOOKING
+// ==========================================
+
+form.addEventListener(
+    "submit",
+    async function(event) {
+
+        event.preventDefault();
+
+
+        // Get values
+
+        const name =
+            document
+                .getElementById("name")
+                .value
+                .trim();
+
+
+        const phone =
+            document
+                .getElementById("phone")
+                .value
+                .trim();
+
+
+        const service =
+            document
+                .getElementById("service")
+                .value;
+
+
+        const address =
+            document
+                .getElementById("address")
+                .value
+                .trim();
+
+
+        // ==================================
+        // PHONE VALIDATION
+        // ==================================
+
+        if (!/^[0-9]{10}$/.test(phone)) {
+
+            alert(
+                "❌ Please enter a valid 10-digit phone number."
+            );
+
+            return;
+
+        }
+
+
+        // ==================================
+        // SUBMIT BUTTON
+        // ==================================
+
+        const submitButton =
+            form.querySelector(
+                "button[type='submit']"
+            );
+
+
+        submitButton.disabled = true;
+
+        submitButton.textContent =
+            "⏳ Submitting...";
+
+
+        try {
+
+
+            // ==================================
+            // SEND TO SERVER
+            // ==================================
+
+            const response =
+                await fetch(
+                    "/api/bookings",
+                    {
+
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body:
+                            JSON.stringify({
+
+                                name:
+                                    name,
+
+                                phone:
+                                    phone,
+
+                                service:
+                                    service,
+
+                                address:
+                                    address
+
+                            })
+
+                    }
+                );
+
+
+            const data =
+                await response.json();
+
+
+            // ==================================
+            // SUCCESS
+            // ==================================
+
+            if (data.success) {
+
+
+                // Save Booking ID
+
+                bookingIdElement.textContent =
+                    data.bookingId;
+
+
+                // Customer details
+
+                successName.textContent =
+                    name;
+
+
+                successPhone.textContent =
+                    phone;
+
+
+                successService.textContent =
+                    service;
+
+
+                successAddress.textContent =
+                    address;
+
+
+                // Save booking ID locally
+
+                localStorage.setItem(
+                    "lastBookingId",
+                    data.bookingId
+                );
+
+
+                // Save customer phone
+
+                localStorage.setItem(
+                    "customerPhone",
+                    phone
+                );
+
+
+                // Hide form
+
+                form.style.display =
+                    "none";
+
+
+                // Show success
+
+                successBox.style.display =
+                    "block";
+
+
+                // Scroll to success box
+
+                successBox.scrollIntoView({
+                    behavior: "smooth"
+                });
+
+
+                console.log(
+                    "Booking created:",
+                    data.bookingId
+                );
+
+            }
+
+
+            // ==================================
+            // ERROR
+            // ==================================
+
+            else {
+
+                alert(
+                    "❌ " +
+                    data.message
+                );
+
+
+                submitButton.disabled =
+                    false;
+
+
+                submitButton.textContent =
+                    "☀️ Submit Service Request";
+
+            }
+
+        }
+
+
+        catch (error) {
+
+            console.error(
+                "Booking error:",
+                error
+            );
+
+
+            alert(
+                "❌ Server se connection nahi ho pa raha."
+            );
+
+
+            submitButton.disabled =
+                false;
+
+
+            submitButton.textContent =
+                "☀️ Submit Service Request";
+
+        }
+
+    }
+);
+
+
+// ==========================================
+// TRACK BOOKING
+// ==========================================
+
+function trackBooking() {
+
+    const bookingId =
+        bookingIdElement.textContent.trim();
+
+
+    if (!bookingId || bookingId === "-") {
+
+        alert(
+            "Booking ID nahi mila."
+        );
+
+        return;
+
+    }
+
+
+    // Open tracking page
+
+    window.location.href =
+        "track-booking.html?bookingId=" +
+        encodeURIComponent(bookingId);
+
+}
+
+
+// ==========================================
+// WHATSAPP SUPPORT
+// ==========================================
+
+function contactWhatsApp() {
+
+    const phone =
+        "918527148407";
+
+
+    const bookingId =
+        bookingIdElement.textContent;
+
+
+    const customer =
+        successName.textContent;
+
+
+    const message =
+`Hello Solar Service Team,
+
+I have submitted a service request.
+
+Booking ID: ${bookingId}
+Customer: ${customer}
+
+Please assist me with my solar service request.
+
+Thank you.`;
+
+
+    const whatsappURL =
+        "https://wa.me/" +
+        phone +
+        "?text=" +
+        encodeURIComponent(message);
+
+
+    window.open(
+        whatsappURL,
+        "_blank"
+    );
+
+}
+
+
+</script>
+
+
+</body>
+
+</html>

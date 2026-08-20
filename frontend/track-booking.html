@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>Track Booking - Solar Service</title>
+
+    <link rel="stylesheet"
+        href="style.css">
+
+</head>
+
+<body>
+
+<div class="app">
+
+    <div class="logo">
+        ☀️ Track Booking
+    </div>
+
+    <p class="subtitle">
+        Check your solar service status
+    </p>
+
+
+    <div class="card">
+
+        <h2>🔎 Track Your Booking</h2>
+
+        <input
+            type="text"
+            id="bookingId"
+            placeholder="Enter Booking ID"
+        >
+
+        <button onclick="trackBooking()">
+            🔎 Track Booking
+        </button>
+
+        <div id="result"></div>
+
+        <br>
+
+        <button
+            onclick="window.location.href='index.html'">
+
+            🏠 Back to Home
+
+        </button>
+
+    </div>
+
+</div>
+
+
+<script>
+
+async function trackBooking() {
+
+    const bookingId =
+        document
+        .getElementById("bookingId")
+        .value
+        .trim();
+
+
+    const result =
+        document.getElementById("result");
+
+
+    if (!bookingId) {
+
+        alert("Please enter Booking ID.");
+
+        return;
+
+    }
+
+
+    result.innerHTML =
+        "<p>🔄 Searching...</p>";
+
+
+    try {
+
+        const response =
+            await fetch(
+                `/api/bookings/id/${bookingId}`
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (!data.success) {
+
+            result.innerHTML = `
+                <div style="
+                    background:#ffe5e5;
+                    padding:15px;
+                    border-radius:10px;
+                    margin-top:20px;
+                ">
+
+                    ❌ Booking not found.
+
+                </div>
+            `;
+
+            return;
+
+        }
+
+
+        const booking =
+            data.booking;
+
+
+        let appointment = `
+            <p>
+                📅 <strong>Appointment:</strong>
+                Not scheduled yet
+            </p>
+        `;
+
+
+        if (
+            booking.appointmentDate &&
+            booking.appointmentTime
+        ) {
+
+            const date =
+                new Date(
+                    booking.appointmentDate
+                );
+
+
+            const formattedDate =
+                date.toLocaleDateString(
+                    "en-IN",
+                    {
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "numeric"
+                    }
+                );
+
+
+            const parts =
+                booking.appointmentTime
+                .split(":");
+
+
+            let hour =
+                parseInt(parts[0]);
+
+
+            const minute =
+                parts[1];
+
+
+            const ampm =
+                hour >= 12
+                ? "PM"
+                : "AM";
+
+
+            hour =
+                hour % 12 || 12;
+
+
+            const formattedTime =
+                `${hour}:${minute} ${ampm}`;
+
+
+            appointment = `
+
+                <p>
+                    📅 <strong>Service Date:</strong>
+                    ${formattedDate}
+                </p>
+
+                <p>
+                    🕐 <strong>Service Time:</strong>
+                    ${formattedTime}
+                </p>
+
+            `;
+
+        }
+
+
+        result.innerHTML = `
+
+            <div style="
+                background:#f1f8f3;
+                padding:20px;
+                border-radius:10px;
+                margin-top:20px;
+            ">
+
+                <h2>
+                    ✅ Booking Found
+                </h2>
+
+                <p>
+                    🆔 <strong>Booking ID:</strong>
+                    ${booking.bookingId}
+                </p>
+
+                <p>
+                    👤 <strong>Customer:</strong>
+                    ${booking.name}
+                </p>
+
+                <p>
+                    🔧 <strong>Service:</strong>
+                    ${booking.service}
+                </p>
+
+                <p>
+                    📍 <strong>Address:</strong>
+                    ${booking.address}
+                </p>
+
+                <p>
+                    📌 <strong>Status:</strong>
+                    ${booking.status}
+                </p>
+
+                ${appointment}
+
+            </div>
+
+        `;
+
+    }
+
+
+    catch (error) {
+
+        console.error(error);
+
+        result.innerHTML = `
+
+            <div style="
+                background:#ffe5e5;
+                padding:15px;
+                border-radius:10px;
+                margin-top:20px;
+            ">
+
+                ❌ Unable to connect to server.
+
+            </div>
+
+        `;
+
+    }
+
+}
+
+</script>
+
+</body>
+
+</html>

@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Admin Panel - Solar Service</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <script>
+    if (sessionStorage.getItem("adminLoggedIn") !== "true") {
+        window.location.href = "admin-login.html";
+    }
+</script>
+
+    <div class="app">
+
+        <div class="logo">
+            ☀️ Solar Service Admin
+        </div>
+
+        <p class="subtitle">
+            Manage Customer Service Requests
+        </p>
+
+
+        <!-- =========================
+             DASHBOARD
+        ========================== -->
+
+        <div class="dashboard">
+
+            <div class="dashboard-box">
+                <div class="dashboard-number" id="totalBookings">0</div>
+                <div>📋 Total</div>
+            </div>
+
+            <div class="dashboard-box">
+                <div class="dashboard-number" id="pendingBookings">0</div>
+                <div>🟡 Pending</div>
+            </div>
+
+            <div class="dashboard-box">
+                <div class="dashboard-number" id="confirmedBookings">0</div>
+                <div>🔵 Confirmed</div>
+            </div>
+
+            <div class="dashboard-box">
+                <div class="dashboard-number" id="completedBookings">0</div>
+                <div>🟢 Completed</div>
+            </div>
+
+            <div class="dashboard-box">
+                <div class="dashboard-number" id="cancelledBookings">0</div>
+                <div>🔴 Cancelled</div>
+            </div>
+
+        </div>
+
+
+        <!-- =========================
+             ALL BOOKINGS
+        ========================== -->
+
+        <div class="card">
+
+            <h2>📋 All Bookings</h2>
+            <div style="margin-bottom: 20px;">
+
+    <input
+        type="text"
+        id="searchInput"
+        placeholder="🔍 Search customer or phone..."
+        oninput="filterBookings()"
+    >
+
+    <select
+        id="statusFilter"
+        onchange="filterBookings()"
+        style="margin-top: 10px;"
+    >
+
+        <option value="All">
+            📋 All Status
+        </option>
+
+        <option value="Pending">
+            🟡 Pending
+        </option>
+
+        <option value="Confirmed">
+            🔵 Confirmed
+        </option>
+
+        <option value="Completed">
+            🟢 Completed
+        </option>
+
+        <option value="Cancelled">
+            🔴 Cancelled
+        </option>
+
+    </select>
+
+</div>
+
+            <div id="bookings">
+                Loading bookings...
+            </div>
+
+            <br>
+
+            <button onclick="window.location.href='index.html'">
+    🏠 Back to Home
+</button>
+
+<button
+    type="button"
+    onclick="adminLogout()"
+    style="background:#dc3545; color:white; margin-top:10px;"
+>
+    🔒 Logout
+</button>
+
+        </div>
+
+    </div>
+
+
+    <script>
+
+
+        // ==========================================
+        // LOAD ALL BOOKINGS
+        // ==========================================
+// =========================
+// ADMIN LOGIN CHECK
+// =========================
+
+if (sessionStorage.getItem("adminLoggedIn") !== "true") {
+
+    window.location.href = "admin-login.html";
+
+}
+        async function loadBookings() {
+
+            try {
+
+                const response =
+                    await fetch("/api/bookings");
+
+                const bookings =
+                    await response.json();
+
+
+                // ==========================================
+                // DASHBOARD COUNTS
+                // ==========================================
+
+                let pending = 0;
+                let confirmed = 0;
+                let completed = 0;
+                let cancelled = 0;
+
+
+                bookings.forEach(booking => {
+
+                    if (booking.status === "Pending") {
+                        pending++;
+                    }
+
+                    if (booking.status === "Confirmed") {
+                        confirmed++;
+                    }
+
+                    if (booking.status === "Completed") {
+                        completed++;
+                    }
+
+                    if (booking.status === "Cancelled") {
+                        cancelled++;
+                    }
+
+                });
+
+
+                document.getElementById("totalBookings").innerText =
+                    bookings.length;
+
+                document.getElementById("pendingBookings").innerText =
+                    pending;
+
+                document.getElementById("confirmedBookings").innerText =
+                    confirmed;
+
+                document.getElementById("completedBookings").innerText =
+                    completed;
+
+                document.getElementById("cancelledBookings").innerText =
+                    cancelled;
+
+
+                // ==========================================
+                // BOOKINGS CONTAINER
+                // ==========================================
+
+                const container =
+                    document.getElementById("bookings");
+
+
+                if (bookings.length === 0) {
+
+                    container.innerHTML =
+                        "<p>No bookings found.</p>";
+
+                    return;
+
+                }
+
+
+                container.innerHTML = "";
+
+
+                // ==========================================
+                // EACH BOOKING
+                // ==========================================
+
+                bookings.forEach(booking => {
+
+                    const div =
+                        document.createElement("div");
+
+
+                    div.style.background = "#ffffff";
+                    div.style.padding = "15px";
+                    div.style.marginBottom = "15px";
+                    div.style.borderRadius = "10px";
+     div.dataset.name =
+    (booking.name || "").toLowerCase();
+
+div.dataset.phone =
+    (booking.phone || "").toLowerCase();
+
+div.dataset.status =
+    booking.status || "Pending";
+
+                    div.innerHTML = `
+
+                        <strong>
+                            👤 ${booking.name}
+                        </strong>
+
+                        <p>
+                            📞 ${booking.phone}
+                            <div style="margin-top:10px;">
+
+    <a
+        href="tel:${booking.phone}"
+        style="
+            display:inline-block;
+            padding:10px 15px;
+            background:#1f8f45;
+            color:white;
+            text-decoration:none;
+            border-radius:8px;
+            margin-right:8px;
+        "
+    >
+        📞 Call
+    </a>
+
+
+    <a
+    href="https://wa.me/91${booking.phone}?text=${encodeURIComponent(
+        `☀️ Hello ${booking.name},
+
+Your Solar Service booking has been updated.
+
+🆔 Booking ID: ${booking.bookingId || "N/A"}
+🔧 Service: ${booking.service}
+📌 Status: ${booking.status || "Pending"}
+
+${
+    booking.appointmentDate && booking.appointmentTime
+    ? `📅 Date: ${booking.appointmentDate}
+🕐 Time: ${booking.appointmentTime}`
+    : `📅 Appointment: Not scheduled yet`
+}
+
+Thank you for choosing Solar Service! ☀️`
+    )}"
+    target="_blank"
+    style="
+        display:inline-block;
+        padding:10px 15px;
+        background:#25D366;
+        color:white;
+        text-decoration:none;
+        border-radius:8px;
+    "
+>
+    💬 WhatsApp
+</a>
+
+</div>
+                        </p>
+
+                        <p>
+                            🔧 ${booking.service}
+                        </p>
+
+                        <p>
+                            📍 ${booking.address}
+                        </p>
+
+                        <p>
+                            <strong>Status:</strong>
+                            ${booking.status || "Pending"}
+                        </p>
+                        ${booking.serviceDate ? `
+    <p>
+        📅 <strong>Service Date:</strong>
+        ${booking.serviceDate}
+    </p>
+
+    <p>
+        🕐 <strong>Service Time:</strong>
+        ${booking.serviceTime}
+    </p>
+` : `
+    <p>
+        📅 <strong>Appointment:</strong>
+        Not scheduled yet
+    </p>
+`}
+
+
+                        <!-- STATUS -->
+
+                        <label>
+                            Change Status:
+                        </label>
+
+                        <select
+                            onchange="updateStatus(
+                                '${booking._id}',
+                                this.value
+                            )"
+                        >
+
+                            <option value="Pending"
+                                ${booking.status === "Pending" ? "selected" : ""}>
+                                Pending
+                            </option>
+
+                            <option value="Confirmed"
+                                ${booking.status === "Confirmed" ? "selected" : ""}>
+                                Confirmed
+                            </option>
+
+                            <option value="Completed"
+                                ${booking.status === "Completed" ? "selected" : ""}>
+                                Completed
+                            </option>
+
+                            <option value="Cancelled"
+                                ${booking.status === "Cancelled" ? "selected" : ""}>
+                                Cancelled
+                            </option>
+
+                        </select>
+
+
+                        <!-- =================================
+                             APPOINTMENT SECTION
+                        ================================== -->
+
+                        <hr style="margin:20px 0;">
+
+
+                        <h3>
+                            📅 Service Appointment
+                        </h3>
+
+
+                        <label>
+                            Service Date:
+                        </label>
+
+
+                        <input
+                            type="date"
+                            id="date-${booking._id}"
+                            value="${booking.appointmentDate || ""}"
+                        >
+
+
+                        <label>
+                            Service Time:
+                        </label>
+
+
+                        <input
+                            type="time"
+                            id="time-${booking._id}"
+                            value="${booking.appointmentTime || ""}"
+                        >
+
+
+                        <button
+                            onclick="saveAppointment('${booking._id}')"
+                        >
+                            📅 Save Appointment
+                        </button>
+<button
+    onclick="deleteBooking('${booking._id}')"
+    style="background:#dc3545; color:white; margin-top:10px;"
+>
+    🗑️ Delete Booking
+</button>
+                    `;
+
+
+                    container.appendChild(div);
+
+                });
+
+            }
+
+
+            catch (error) {
+
+                console.error(error);
+
+                document.getElementById("bookings").innerHTML =
+                    "<p>Unable to load bookings.</p>";
+
+            }
+
+        }
+
+
+
+        // ==========================================
+        // UPDATE STATUS
+        // ==========================================
+        // ===============================
+// SEARCH + STATUS FILTER
+// ===============================
+
+// ===============================
+// SEARCH + STATUS FILTER
+// ===============================
+
+function filterBookings() {
+
+    const search =
+        document
+            .getElementById("searchInput")
+            .value
+            .toLowerCase()
+            .trim();
+
+    const selectedStatus =
+        document
+            .getElementById("statusFilter")
+            .value;
+
+
+    const cards =
+        document
+            .getElementById("bookings")
+            .children;
+
+
+    for (let card of cards) {
+
+        const cardName =
+            card.dataset.name || "";
+
+        const cardPhone =
+            card.dataset.phone || "";
+
+        const cardStatus =
+            card.dataset.status || "";
+
+
+        const matchesSearch =
+            cardName.includes(search) ||
+            cardPhone.includes(search);
+
+
+        const matchesStatus =
+            selectedStatus === "All" ||
+            cardStatus === selectedStatus;
+
+
+        if (
+            matchesSearch &&
+            matchesStatus
+        ) {
+
+            card.style.display = "";
+
+        } else {
+
+            card.style.display = "none";
+
+        }
+
+    }
+
+}
+// ===============================
+// DELETE BOOKING
+// ===============================
+
+async function deleteBooking(id) {
+
+    const confirmDelete =
+        confirm(
+            "⚠️ Are you sure you want to delete this booking?"
+        );
+
+    if (!confirmDelete) {
+        return;
+    }
+
+    try {
+
+        const response =
+            await fetch(
+                `/api/bookings/${id}`,
+                {
+                    method: "DELETE"
+                }
+            );
+
+        const data =
+            await response.json();
+
+        if (data.success) {
+
+            alert(
+                "🗑️ Booking deleted successfully!"
+            );
+
+            loadBookings();
+
+        } else {
+
+            alert(
+                "❌ " + data.message
+            );
+
+        }
+
+    } catch (error) {
+
+        console.error(error);
+
+        alert(
+            "❌ Server connection problem."
+        );
+
+    }
+
+}
+        async function updateStatus(id, status) {
+
+            try {
+
+                const response =
+                    await fetch(
+                        `/api/bookings/${id}/status`,
+                        {
+                            method: "PUT",
+
+                            headers: {
+                                "Content-Type": "application/json"
+                            },
+
+                            body: JSON.stringify({
+                                status: status
+                            })
+
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (data.success) {
+
+                    alert(
+                        "✅ Booking status updated!"
+                    );
+
+                    loadBookings();
+
+                }
+
+                else {
+
+                    alert(
+                        "❌ " + data.message
+                    );
+
+                }
+
+            }
+
+
+            catch (error) {
+
+                console.error(error);
+
+                alert(
+                    "❌ Server connection problem."
+                );
+
+            }
+
+        }
+
+
+
+        // ==========================================
+        // SAVE APPOINTMENT
+        // ==========================================
+
+        async function saveAppointment(id) {
+
+            const date =
+                document.getElementById(
+                    `date-${id}`
+                ).value;
+
+
+            const time =
+                document.getElementById(
+                    `time-${id}`
+                ).value;
+
+
+            if (!date || !time) {
+
+                alert(
+                    "⚠️ Please select date and time."
+                );
+
+                return;
+
+            }
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        `/api/bookings/${id}/appointment`,
+                        {
+                            method: "PUT",
+
+                            headers: {
+                                "Content-Type": "application/json"
+                            },
+
+                            body: JSON.stringify({
+
+                                appointmentDate: date,
+
+                                appointmentTime: time
+
+                            })
+
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (data.success) {
+
+                    alert(
+                        "✅ Service appointment saved!"
+                    );
+
+                    loadBookings();
+
+                }
+
+                else {
+
+                    alert(
+                        "❌ " + data.message
+                    );
+
+                }
+
+            }
+
+
+            catch (error) {
+
+                console.error(error);
+
+                alert(
+                    "❌ Server connection problem."
+                );
+
+            }
+
+        }
+
+
+
+        // ==========================================
+        // LOAD BOOKINGS WHEN PAGE OPENS
+        // ==========================================
+
+        loadBookings();
+function adminLogout() {
+
+    sessionStorage.removeItem("adminLoggedIn");
+
+    window.location.href = "admin-login.html";
+
+}
+
+</script>
+
+</body>
+
+</html>

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Customer Login - Solar Service</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="app">
+
+        <div class="logo">
+            ☀️ Solar Service
+        </div>
+
+        <p class="subtitle">
+            Customer Login
+        </p>
+
+        <div class="card">
+
+            <h2>📱 My Services</h2>
+
+            <p>
+                Enter your registered phone number
+                to view your service requests.
+            </p>
+
+            <input
+                type="tel"
+                id="phone"
+                placeholder="Enter phone number"
+                maxlength="10"
+            >
+
+            <button onclick="login()">
+                🔐 View My Services
+            </button>
+
+            <button onclick="window.location.href='index.html'">
+                🏠 Back to Home
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <script>
+
+        function login() {
+
+            const phone =
+                document.getElementById("phone").value.trim();
+
+            if (phone.length !== 10) {
+
+                alert("Please enter a valid 10-digit phone number.");
+
+                return;
+            }
+
+            // Save phone number
+            localStorage.setItem("customerPhone", phone);
+
+            // Open My Services
+            window.location.href = "my-services.html";
+
+        }
+
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>My Services - Solar Service</title>
+
+    <link rel="stylesheet"
+        href="style.css">
+
+</head>
+
+
+<body>
+
+    <div class="app">
+
+        <div class="logo">
+            ☀️ My Services
+        </div>
+
+        <p class="subtitle">
+            Your service requests
+        </p>
+
+
+        <div class="card">
+
+            <h2>
+                📋 My Bookings
+            </h2>
+
+
+            <div id="bookings">
+                Loading services...
+            </div>
+
+
+            <br>
+
+
+            <button
+                onclick="window.location.href='index.html'">
+
+                🏠 Back to Home
+
+            </button>
+
+
+            <button onclick="logout()">
+
+                🔐 Logout
+
+            </button>
+
+        </div>
+
+    </div>
+
+
+
+    <script>
+
+
+        // ==========================================
+        // CUSTOMER PHONE
+        // ==========================================
+
+        const phone =
+            localStorage.getItem("customerPhone");
+
+
+
+        // ==========================================
+        // LOAD BOOKINGS
+        // ==========================================
+
+        async function loadBookings() {
+
+            try {
+
+                const response =
+    await fetch(
+        `/api/bookings/customer/${phone}`
+    );
+
+
+        const data =
+    await response.json();
+
+const myBookings =
+    data.bookings || [];
+
+
+                const container =
+                    document.getElementById(
+                        "bookings"
+                    );
+
+
+                if (myBookings.length === 0) {
+
+                    container.innerHTML = `
+                        <p>
+                            No service requests found.
+                        </p>
+                    `;
+
+                    return;
+
+                }
+
+
+                container.innerHTML = "";
+
+
+                myBookings.forEach(
+                    booking => {
+
+
+                        const div =
+                            document.createElement(
+                                "div"
+                            );
+
+
+                        div.style.background =
+                            "#ffffff";
+
+                        div.style.padding =
+                            "15px";
+
+                        div.style.marginBottom =
+                            "15px";
+
+                        div.style.borderRadius =
+                            "10px";
+
+
+                        // ==================================
+                        // NOTIFICATION MESSAGE
+                        // ==================================
+
+                        let notification = "";
+
+                        let notificationColor =
+                            "#fff4cc";
+
+
+                        if (
+                            booking.status ===
+                            "Pending"
+                        ) {
+
+                            notification = `
+                                🟡
+                                <strong>
+                                    Service Request Received
+                                </strong>
+                                <br><br>
+                                Your service request is
+                                currently under review.
+                            `;
+
+                        }
+
+
+                        else if (
+                            booking.status ===
+                            "Confirmed"
+                        ) {
+
+                            notification = `
+                                🔵
+                                <strong>
+                                    Service Confirmed
+                                </strong>
+                                <br><br>
+                                Your service appointment
+                                has been confirmed.
+                            `;
+
+                        }
+
+
+                        else if (
+                            booking.status ===
+                            "Completed"
+                        ) {
+
+                            notification = `
+                                🟢
+                                <strong>
+                                    Service Completed
+                                </strong>
+                                <br><br>
+                                Your solar service has
+                                been completed successfully.
+                            `;
+
+                        }
+
+
+                        else if (
+                            booking.status ===
+                            "Cancelled"
+                        ) {
+
+                            notification = `
+                                🔴
+                                <strong>
+                                    Service Cancelled
+                                </strong>
+                                <br><br>
+                                Your service request
+                                has been cancelled.
+                            `;
+
+                            notificationColor =
+                                "#ffe5e5";
+
+                        }
+
+
+
+                        // ==================================
+                        // APPOINTMENT
+                        // ==================================
+
+                        let appointmentHTML = "";
+
+
+                        if (
+                            booking.appointmentDate &&
+                            booking.appointmentTime
+                        ) {
+
+                            const date =
+                                new Date(
+                                    booking.appointmentDate
+                                );
+
+
+                            const formattedDate =
+                                date.toLocaleDateString(
+                                    "en-IN",
+                                    {
+                                        day: "2-digit",
+                                        month: "2-digit",
+                                        year: "numeric"
+                                    }
+                                );
+
+
+                            const parts =
+                                booking.appointmentTime
+                                    .split(":");
+
+
+                            let hour =
+                                parseInt(parts[0]);
+
+
+                            const minute =
+                                parts[1];
+
+
+                            const ampm =
+                                hour >= 12
+                                    ? "PM"
+                                    : "AM";
+
+
+                            hour =
+                                hour % 12 || 12;
+
+
+                            const formattedTime =
+                                `${hour}:${minute} ${ampm}`;
+
+
+                            appointmentHTML = `
+
+                                <hr
+                                    style="
+                                    margin:20px 0;
+                                    "
+                                >
+
+                                <p>
+                                    📅
+                                    <strong>
+                                        Service Date:
+                                    </strong>
+
+                                    ${formattedDate}
+                                </p>
+
+                                <p>
+                                    🕐
+                                    <strong>
+                                        Service Time:
+                                    </strong>
+
+                                    ${formattedTime}
+                                </p>
+
+                            `;
+
+                        }
+
+
+                        else {
+
+                            appointmentHTML = `
+
+                                <hr
+                                    style="
+                                    margin:20px 0;
+                                    "
+                                >
+
+                                <p>
+                                    📅
+                                    <strong>
+                                        Appointment:
+                                    </strong>
+
+                                    Not scheduled yet
+                                </p>
+
+                            `;
+
+                        }
+
+
+
+                        // ==================================
+                        // BOOKING CARD
+                        // ==================================
+
+                        div.innerHTML = `
+
+                            <div
+                                style="
+                                background:${notificationColor};
+                                padding:15px;
+                                border-radius:10px;
+                                margin-bottom:20px;
+                                "
+                            >
+
+                                ${notification}
+
+                            </div>
+
+
+                            <strong>
+                                👤
+                                ${booking.name}
+                            </strong>
+
+
+                            <p>
+                                📞
+                                ${booking.phone}
+                            </p>
+
+
+                            <p>
+                                🔧
+                                ${booking.service}
+                            </p>
+
+
+                            <p>
+                                📍
+                                ${booking.address}
+                            </p>
+
+
+                            <p>
+
+                                <strong>
+                                    Status:
+                                </strong>
+
+                                ${booking.status || "Pending"}
+
+                            </p>
+
+
+                            ${appointmentHTML}
+
+                        `;
+
+
+                        container.appendChild(div);
+
+                    }
+                );
+
+            }
+
+
+            catch (error) {
+
+                console.error(error);
+
+
+                document.getElementById(
+                    "bookings"
+                ).innerHTML = `
+
+                    <p>
+                        Unable to load services.
+                    </p>
+
+                `;
+
+            }
+
+        }
+
+
+
+        // ==========================================
+        // LOGOUT
+        // ==========================================
+
+        function logout() {
+
+            localStorage.removeItem(
+                "customerPhone"
+            );
+
+            window.location.href =
+                "login.html";
+
+        }
+
+
+
+        // ==========================================
+        // PAGE LOAD
+        // ==========================================
+
+        if (!phone) {
+
+            window.location.href =
+                "login.html";
+
+        }
+
+        else {
+
+            loadBookings();
+
+        }
+
+
+    </script>
+
+</body>
+
+</html>
