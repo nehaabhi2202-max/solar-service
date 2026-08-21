@@ -737,7 +737,216 @@ function adminLogout() {
 }
 
 </script>
+<!-- =========================
+     CUSTOMER REVIEWS
+========================= -->
 
+<div class="card" style="margin-top:25px;">
+
+    <h2>⭐ Customer Reviews</h2>
+
+    <div id="reviewsContainer">
+        <p>Loading reviews...</p>
+    </div>
+
+</div>
+
+
+<script>
+
+async function loadReviews() {
+
+    const container =
+        document.getElementById("reviewsContainer");
+
+    try {
+
+        const response =
+            await fetch("/api/admin/reviews");
+
+        const data =
+            await response.json();
+
+        if (!data.success) {
+
+            container.innerHTML =
+                "<p>❌ Reviews load nahi ho paaye.</p>";
+
+            return;
+        }
+
+        if (!data.reviews.length) {
+
+            container.innerHTML =
+                "<p>⭐ Abhi koi review nahi hai.</p>";
+
+            return;
+        }
+
+        container.innerHTML = "";
+
+        data.reviews.forEach(review => {
+
+            const div =
+                document.createElement("div");
+
+            div.style.cssText = `
+                background:#f4faf5;
+                padding:18px;
+                margin:12px 0;
+                border-radius:12px;
+                border:1px solid #ddd;
+            `;
+
+            const stars =
+                "⭐".repeat(review.rating);
+
+            const status =
+                review.approved
+                    ? "🟢 Approved"
+                    : "🟠 Pending";
+
+            div.innerHTML = `
+
+                <h3 style="margin:0 0 8px;">
+                    ${review.customerName}
+                </h3>
+
+                <div style="font-size:20px;">
+                    ${stars}
+                </div>
+
+                <p style="margin:8px 0;">
+                    ${review.comment || "No written feedback"}
+                </p>
+
+                <p>
+                    <strong>Booking:</strong>
+                    ${review.bookingId}
+                </p>
+
+                <p>
+                    <strong>Status:</strong>
+                    ${status}
+                </p>
+
+                ${
+                    review.approved
+
+                    ?
+
+                    `<button
+                        onclick="updateReview('${review._id}', false)"
+                        style="
+                            background:#d9534f;
+                            color:white;
+                            border:0;
+                            padding:10px 16px;
+                            border-radius:8px;
+                            cursor:pointer;
+                        "
+                    >
+                        Hide Review
+                    </button>`
+
+                    :
+
+                    `<button
+                        onclick="updateReview('${review._id}', true)"
+                        style="
+                            background:#219653;
+                            color:white;
+                            border:0;
+                            padding:10px 16px;
+                            border-radius:8px;
+                            cursor:pointer;
+                        "
+                    >
+                        ✅ Approve Review
+                    </button>`
+                }
+
+            `;
+
+            container.appendChild(div);
+
+        });
+
+    }
+
+    catch(error) {
+
+        console.log(error);
+
+        container.innerHTML =
+            "<p>❌ Server connection error.</p>";
+
+    }
+
+}
+
+
+async function updateReview(id, approved) {
+
+    try {
+
+        const response =
+            await fetch(
+                `/api/admin/reviews/${id}`,
+                {
+                    method: "PUT",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body: JSON.stringify({
+                        approved: approved
+                    })
+                }
+            );
+
+        const data =
+            await response.json();
+
+        if (data.success) {
+
+            alert(
+                approved
+                    ? "⭐ Review approved!"
+                    : "Review hidden."
+            );
+
+            loadReviews();
+
+        } else {
+
+            alert(
+                "❌ " + data.message
+            );
+
+        }
+
+    }
+
+    catch(error) {
+
+        console.log(error);
+
+        alert(
+            "❌ Review update nahi ho paaya."
+        );
+
+    }
+
+}
+
+
+// Load reviews when Admin Panel opens
+loadReviews();
+
+</script>
 </body>
 
 </html>
