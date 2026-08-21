@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>Rate Our Service</title>
+
+    <link rel="stylesheet"
+        href="style.css">
+</head>
+
+<body>
+
+<div class="app">
+
+    <div class="logo">
+        ⭐ Rate Our Service
+    </div>
+
+    <p class="subtitle">
+        Share your experience with us
+    </p>
+
+    <div class="card">
+
+        <label>
+            Booking ID
+        </label>
+
+        <input
+            type="text"
+            id="bookingId"
+            placeholder="Enter Booking ID"
+        >
+
+        <button onclick="checkBooking()">
+            🔎 Check Booking
+        </button>
+
+    </div>
+
+
+    <div
+        class="card"
+        id="reviewBox"
+        style="display:none;"
+    >
+
+        <h2>
+            ⭐ Give Your Review
+        </h2>
+
+        <p>
+            Customer:
+            <strong id="customerName"></strong>
+        </p>
+
+        <p>
+            Service:
+            <strong id="serviceName"></strong>
+        </p>
+
+
+        <label>
+            Rating
+        </label>
+
+        <div style="font-size:32px;margin:10px 0;">
+
+            <span onclick="setRating(1)" id="star1">☆</span>
+            <span onclick="setRating(2)" id="star2">☆</span>
+            <span onclick="setRating(3)" id="star3">☆</span>
+            <span onclick="setRating(4)" id="star4">☆</span>
+            <span onclick="setRating(5)" id="star5">☆</span>
+
+        </div>
+
+        <label>
+            Your Feedback
+        </label>
+
+        <textarea
+            id="comment"
+            placeholder="Write your experience..."
+        ></textarea>
+
+        <button onclick="submitReview()">
+            Submit Review
+        </button>
+
+    </div>
+
+</div>
+
+
+<script>
+
+let currentBooking = null;
+let selectedRating = 0;
+
+
+function setRating(rating){
+
+    selectedRating = rating;
+
+    for(let i=1;i<=5;i++){
+
+        document.getElementById(
+            "star"+i
+        ).innerHTML =
+            i<=rating ? "★" : "☆";
+
+    }
+
+}
+
+
+async function checkBooking(){
+
+    const bookingId =
+        document
+        .getElementById("bookingId")
+        .value
+        .trim();
+
+    if(!bookingId){
+
+        alert("Enter Booking ID");
+
+        return;
+
+    }
+
+    try{
+
+        const response =
+            await fetch(
+                `/api/bookings/id/${bookingId}`
+            );
+
+        const data =
+            await response.json();
+
+        if(!data.success){
+
+            alert("Booking not found");
+
+            return;
+
+        }
+
+        const booking =
+            data.booking;
+
+        if(
+            booking.status !== "Completed"
+        ){
+
+            alert(
+                "Review can be submitted only after service is completed."
+            );
+
+            return;
+
+        }
+
+        currentBooking = booking;
+
+        document
+        .getElementById("customerName")
+        .innerText =
+            booking.name;
+
+        document
+        .getElementById("serviceName")
+        .innerText =
+            booking.service;
+
+        document
+        .getElementById("reviewBox")
+        .style.display =
+            "block";
+
+    }
+
+    catch(error){
+
+        alert(
+            "Server connection error"
+        );
+
+    }
+
+}
+
+
+async function submitReview(){
+
+    if(!selectedRating){
+
+        alert("Please select rating");
+
+        return;
+
+    }
+
+    const comment =
+        document
+        .getElementById("comment")
+        .value
+        .trim();
+
+    try{
+
+        const response =
+            await fetch(
+                "/api/reviews",
+                {
+
+                    method:"POST",
+
+                    headers:{
+                        "Content-Type":"application/json"
+                    },
+
+                    body:JSON.stringify({
+
+                        bookingId:
+                            currentBooking.bookingId,
+
+                        customerName:
+                            currentBooking.name,
+
+                        rating:
+                            selectedRating,
+
+                        comment:
+                            comment
+
+                    })
+
+                }
+            );
+
+        const data =
+            await response.json();
+
+        if(data.success){
+
+            alert(
+                "⭐ Thank you for your review!"
+            );
+
+            window.location.href =
+                "index.html";
+
+        }
+
+        else{
+
+            alert(
+                "❌ "+data.message
+            );
+
+        }
+
+    }
+
+    catch(error){
+
+        alert(
+            "Unable to submit review"
+        );
+
+    }
+
+}
+
+</script>
+
+</body>
+</html>
