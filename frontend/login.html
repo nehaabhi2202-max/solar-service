@@ -2,78 +2,524 @@
 <html lang="en">
 
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Customer Login - Solar Service</title>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
-    <link rel="stylesheet" href="style.css">
+    <title>Customer Account | Solar Service</title>
+
+    <link rel="stylesheet"
+          href="style.css">
+
+    <style>
+
+        .auth-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .auth-tabs button {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #0755c9;
+            border-radius: 8px;
+            background: white;
+            color: #0755c9;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .auth-tabs button.active {
+            background: #0755c9;
+            color: white;
+        }
+
+        .auth-form {
+            display: none;
+        }
+
+        .auth-form.active {
+            display: block;
+        }
+
+        .message {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 8px;
+            display: none;
+            font-size: 14px;
+        }
+
+        .message.success {
+            display: block;
+            background: #e7f8ed;
+            color: #16823b;
+        }
+
+        .message.error {
+            display: block;
+            background: #fff0f0;
+            color: #c62828;
+        }
+
+        .auth-form input {
+            width: 100%;
+            box-sizing: border-box;
+            margin-bottom: 12px;
+        }
+
+    </style>
+
 </head>
+
 
 <body>
 
-    <div class="app">
+<div class="app">
 
-        <div class="logo">
-            ☀️ Solar Service
-        </div>
-
-        <p class="subtitle">
-            Customer Login
-        </p>
-
-        <div class="card">
-
-            <h2>📱 My Services</h2>
-
-            <p>
-                Enter your registered phone number
-                to view your service requests.
-            </p>
-
-            <input
-                type="tel"
-                id="phone"
-                placeholder="Enter phone number"
-                maxlength="10"
-            >
-
-            <button onclick="login()">
-                🔐 View My Services
-            </button>
-
-            <button onclick="window.location.href='index.html'">
-                🏠 Back to Home
-            </button>
-
-        </div>
-
+    <div class="logo">
+        ☀️ Solar Service
     </div>
 
 
-    <script>
+    <p class="subtitle">
+        Customer Account
+    </p>
 
-        function login() {
 
-            const phone =
-                document.getElementById("phone").value.trim();
+    <div class="card">
 
-            if (phone.length !== 10) {
+        <!-- TABS -->
 
-                alert("Please enter a valid 10-digit phone number.");
+        <div class="auth-tabs">
 
-                return;
-            }
+            <button
+                id="loginTab"
+                class="active"
+                onclick="showLogin()">
 
-            // Save phone number
-            localStorage.setItem("customerPhone", phone);
+                🔐 Login
 
-            // Open My Services
-            window.location.href = "my-services.html";
+            </button>
 
+
+            <button
+                id="signupTab"
+                onclick="showSignup()">
+
+                🆕 Sign Up
+
+            </button>
+
+        </div>
+
+
+        <!-- LOGIN -->
+
+        <div
+            id="loginForm"
+            class="auth-form active">
+
+            <h2>
+                👤 Customer Login
+            </h2>
+
+            <p>
+                Enter your registered mobile number.
+            </p>
+
+
+            <input
+                type="tel"
+                id="loginPhone"
+                placeholder="Enter 10-digit mobile number"
+                maxlength="10">
+                <input
+    type="text"
+    id="name"
+    placeholder="Enter your name"
+>
+
+<button onclick="signupCustomer()">
+    📝 Sign Up
+</button>
+
+
+            <button
+                onclick="loginCustomer()">
+
+                🔐 Login
+
+            </button>
+
+        </div>
+
+
+        <!-- SIGNUP -->
+
+        <div
+            id="signupForm"
+            class="auth-form">
+
+            <h2>
+                🆕 Create Account
+            </h2>
+
+            <p>
+                Create your Solar Service customer account.
+            </p>
+
+
+            <input
+                type="text"
+                id="signupName"
+                placeholder="Enter your full name">
+
+
+            <input
+                type="tel"
+                id="signupPhone"
+                placeholder="Enter 10-digit mobile number"
+                maxlength="10">
+
+
+            <button
+                onclick="signupCustomer()">
+
+                📝 Create Account
+
+            </button>
+
+        </div>
+
+
+        <div
+            id="message"
+            class="message">
+        </div>
+
+
+        <br>
+
+
+        <button
+            onclick="window.location.href='index.html'">
+
+            🏠 Back to Home
+
+        </button>
+
+    </div>
+
+</div>
+
+
+<script>
+
+
+function showLogin() {
+
+    document
+        .getElementById("loginForm")
+        .classList.add("active");
+
+    document
+        .getElementById("signupForm")
+        .classList.remove("active");
+
+
+    document
+        .getElementById("loginTab")
+        .classList.add("active");
+
+    document
+        .getElementById("signupTab")
+        .classList.remove("active");
+
+
+    clearMessage();
+
+}
+
+
+
+function showSignup() {
+
+    document
+        .getElementById("signupForm")
+        .classList.add("active");
+
+    document
+        .getElementById("loginForm")
+        .classList.remove("active");
+
+
+    document
+        .getElementById("signupTab")
+        .classList.add("active");
+
+    document
+        .getElementById("loginTab")
+        .classList.remove("active");
+
+
+    clearMessage();
+
+}
+
+
+
+function showMessage(message, type) {
+
+    const box =
+        document.getElementById("message");
+
+    box.textContent = message;
+
+    box.className =
+        "message " + type;
+
+}
+
+
+
+function clearMessage() {
+
+    const box =
+        document.getElementById("message");
+
+    box.textContent = "";
+
+    box.className = "message";
+
+}
+
+
+
+async function signupCustomer() {
+
+    const name =
+        document
+            .getElementById("signupName")
+            .value
+            .trim();
+
+
+    const phone =
+        document
+            .getElementById("signupPhone")
+            .value
+            .trim();
+
+
+    if (!name) {
+
+        showMessage(
+            "Please enter your name.",
+            "error"
+        );
+
+        return;
+    }
+
+
+    if (!/^\d{10}$/.test(phone)) {
+
+        showMessage(
+            "Please enter a valid 10-digit mobile number.",
+            "error"
+        );
+
+        return;
+    }
+
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/customers/signup",
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body: JSON.stringify({
+                        name: name,
+                        phone: phone
+                    })
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (!response.ok ||
+            !data.success) {
+
+            showMessage(
+                data.message ||
+                "Signup failed.",
+                "error"
+            );
+
+            return;
         }
 
-    </script>
+
+        // Save customer details
+
+        localStorage.setItem(
+            "customerPhone",
+            data.customer.phone
+        );
+
+        localStorage.setItem(
+            "customerName",
+            data.customer.name
+        );
+
+        localStorage.setItem(
+            "customerId",
+            data.customer.id
+        );
+
+
+        showMessage(
+            "Account created successfully! 🎉",
+            "success"
+        );
+
+
+        setTimeout(
+            () => {
+                window.location.href =
+                    "my-services.html";
+            },
+            1000
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Signup error:",
+            error
+        );
+
+        showMessage(
+            "Server error. Please try again.",
+            "error"
+        );
+
+    }
+
+}
+
+
+
+async function loginCustomer() {
+
+    const phone =
+        document
+            .getElementById("loginPhone")
+            .value
+            .trim();
+
+
+    if (!/^\d{10}$/.test(phone)) {
+
+        showMessage(
+            "Please enter a valid 10-digit mobile number.",
+            "error"
+        );
+
+        return;
+    }
+
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/customers/login",
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body: JSON.stringify({
+                        phone: phone
+                    })
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (!response.ok ||
+            !data.success) {
+
+            showMessage(
+                data.message ||
+                "Login failed.",
+                "error"
+            );
+
+            return;
+        }
+
+
+        localStorage.setItem(
+            "customerPhone",
+            data.customer.phone
+        );
+
+        localStorage.setItem(
+            "customerName",
+            data.customer.name
+        );
+
+        localStorage.setItem(
+            "customerId",
+            data.customer.id
+        );
+
+
+        window.location.href =
+            "my-services.html";
+
+
+    } catch (error) {
+
+        console.error(
+            "Login error:",
+            error
+        );
+
+        showMessage(
+            "Server error. Please try again.",
+            "error"
+        );
+
+    }
+
+}
+
+</script>
 
 </body>
 

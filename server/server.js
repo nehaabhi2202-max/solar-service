@@ -33,6 +33,135 @@ mongoose.connect(process.env.MONGODB_URI)
     );
   });
 
+// ===============================
+// CUSTOMER SCHEMA
+// ===============================
+
+const customerSchema = new mongoose.Schema({
+
+  name: {
+    type: String,
+    required: true
+  },
+
+  phone: {
+    type: String,
+    required: true,
+    unique: true
+  },
+
+  createdAt: {
+    type: Date,
+    default: Date.now
+  }
+
+});
+
+
+const Customer =
+  mongoose.model("Customer", customerSchema);
+// ===============================
+// CUSTOMER LOGIN
+// ===============================
+// ===============================
+// CUSTOMER SIGN UP
+// ===============================
+
+app.post("/api/customers/signup", async (req, res) => {
+
+    try {
+
+        const { name, phone } = req.body;
+
+        if (!name || !phone) {
+            return res.status(400).json({
+                success: false,
+                message: "Name and phone number are required."
+            });
+        }
+
+        const existingCustomer =
+            await Customer.findOne({ phone });
+
+        if (existingCustomer) {
+            return res.status(409).json({
+                success: false,
+                message: "Customer already registered. Please login."
+            });
+        }
+
+        const customer = await Customer.create({
+            name,
+            phone
+        });
+
+        res.json({
+            success: true,
+            message: "Sign Up successful.",
+            customer: {
+                id: customer._id,
+                name: customer.name,
+                phone: customer.phone
+            }
+        });
+
+    } catch (error) {
+
+        console.log("Customer signup error:", error);
+
+        res.status(500).json({
+            success: false,
+            message: "Server error during signup."
+        });
+
+    }
+
+});
+
+app.post("/api/customers/login", async (req, res) => {
+
+  try {
+
+    const { phone } = req.body;
+
+    if (!phone) {
+      return res.status(400).json({
+        success: false,
+        message: "Phone number is required."
+      });
+    }
+
+    const customer = await Customer.findOne({ phone });
+
+    if (!customer) {
+      return res.status(404).json({
+        success: false,
+        message: "Customer not found. Please sign up first."
+      });
+    }
+
+    res.json({
+      success: true,
+      message: "Login successful.",
+      customer: {
+        id: customer._id,
+        name: customer.name,
+        phone: customer.phone
+      }
+    });
+
+  } catch (error) {
+
+    console.log("Customer login error:", error);
+
+    res.status(500).json({
+      success: false,
+      message: "Server error during login."
+    });
+
+  }
+
+});
 
 // ===============================
 // BOOKING ID GENERATOR
@@ -103,7 +232,74 @@ const bookingSchema = new mongoose.Schema({
 const Booking =
   mongoose.model("Booking", bookingSchema);
 
+// ===============================
+// CUSTOMER SIGNUP
+// ===============================
 
+app.post("/api/customers/signup", async (req, res) => {
+
+  try {
+
+    const { name, phone } = req.body;
+
+    if (!name || !phone) {
+
+      return res.status(400).json({
+        success: false,
+        message: "Name and phone number are required."
+      });
+
+    }
+
+    if (!/^\d{10}$/.test(phone)) {
+
+      return res.status(400).json({
+        success: false,
+        message: "Please enter a valid 10-digit phone number."
+      });
+
+    }
+
+    const existingCustomer =
+      await Customer.findOne({ phone });
+
+    if (existingCustomer) {
+
+      return res.status(409).json({
+        success: false,
+        message: "This phone number is already registered."
+      });
+
+    }
+
+    const customer =
+      await Customer.create({
+        name,
+        phone
+      });
+
+    res.json({
+      success: true,
+      message: "Customer registered successfully.",
+      customer: {
+        id: customer._id,
+        name: customer.name,
+        phone: customer.phone
+      }
+    });
+
+  } catch (error) {
+
+    console.error("Customer signup error:", error);
+
+    res.status(500).json({
+      success: false,
+      message: "Customer registration failed."
+    });
+
+  }
+
+});
 // ===============================
 // HOME
 // ===============================
