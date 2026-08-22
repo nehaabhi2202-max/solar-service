@@ -2,7 +2,6 @@
 <html lang="en">
 
 <head>
-
     <meta charset="UTF-8">
 
     <meta name="viewport"
@@ -10,11 +9,9 @@
 
     <title>Customer Account | Solar Service</title>
 
-    <link rel="stylesheet"
-          href="style.css">
+    <link rel="stylesheet" href="style.css">
 
     <style>
-
         .auth-tabs {
             display: flex;
             gap: 10px;
@@ -45,6 +42,15 @@
             display: block;
         }
 
+        .auth-form input {
+            width: 100%;
+            box-sizing: border-box;
+            margin-bottom: 12px;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+
         .message {
             margin-top: 15px;
             padding: 10px;
@@ -64,17 +70,8 @@
             background: #fff0f0;
             color: #c62828;
         }
-
-        .auth-form input {
-            width: 100%;
-            box-sizing: border-box;
-            margin-bottom: 12px;
-        }
-
     </style>
-
 </head>
-
 
 <body>
 
@@ -84,11 +81,9 @@
         ☀️ Solar Service
     </div>
 
-
     <p class="subtitle">
         Customer Account
     </p>
-
 
     <div class="card">
 
@@ -105,12 +100,11 @@
 
             </button>
 
-
             <button
                 id="signupTab"
                 onclick="showSignup()">
 
-                🆕 Sign Up
+                📝 Sign Up
 
             </button>
 
@@ -119,91 +113,59 @@
 
         <!-- LOGIN -->
 
-        <div
-            id="loginForm"
-            class="auth-form active">
+        <div id="loginForm" class="auth-form active">
 
-            <h2>
-                👤 Customer Login
-            </h2>
+            <h2>📱 Customer Login</h2>
 
             <p>
                 Enter your registered mobile number.
             </p>
 
-
             <input
                 type="tel"
                 id="loginPhone"
-                placeholder="Enter 10-digit mobile number"
+                placeholder="10-digit mobile number"
                 maxlength="10">
-                <input
-    type="text"
-    id="name"
-    placeholder="Enter your name"
->
 
-<button onclick="signupCustomer()">
-    📝 Sign Up
-</button>
-
-
-            <button
-                onclick="loginCustomer()">
-
+            <button onclick="loginCustomer()">
                 🔐 Login
-
             </button>
 
         </div>
 
 
-        <!-- SIGNUP -->
+        <!-- SIGN UP -->
 
-        <div
-            id="signupForm"
-            class="auth-form">
+        <div id="signupForm" class="auth-form">
 
-            <h2>
-                🆕 Create Account
-            </h2>
-
-            <p>
-                Create your Solar Service customer account.
-            </p>
-
+            <h2>📝 Create Account</h2>
 
             <input
                 type="text"
                 id="signupName"
-                placeholder="Enter your full name">
-
+                placeholder="Full Name">
 
             <input
                 type="tel"
                 id="signupPhone"
-                placeholder="Enter 10-digit mobile number"
+                placeholder="10-digit mobile number"
                 maxlength="10">
 
-
-            <button
-                onclick="signupCustomer()">
-
+            <button onclick="signupCustomer()">
                 📝 Create Account
-
             </button>
 
         </div>
 
 
-        <div
-            id="message"
-            class="message">
+        <!-- MESSAGE -->
+
+        <div id="message"
+             class="message">
         </div>
 
 
         <br>
-
 
         <button
             onclick="window.location.href='index.html'">
@@ -219,7 +181,6 @@
 
 <script>
 
-
 function showLogin() {
 
     document
@@ -230,7 +191,6 @@ function showLogin() {
         .getElementById("signupForm")
         .classList.remove("active");
 
-
     document
         .getElementById("loginTab")
         .classList.add("active");
@@ -239,11 +199,8 @@ function showLogin() {
         .getElementById("signupTab")
         .classList.remove("active");
 
-
     clearMessage();
-
 }
-
 
 
 function showSignup() {
@@ -256,7 +213,6 @@ function showSignup() {
         .getElementById("loginForm")
         .classList.remove("active");
 
-
     document
         .getElementById("signupTab")
         .classList.add("active");
@@ -265,11 +221,8 @@ function showSignup() {
         .getElementById("loginTab")
         .classList.remove("active");
 
-
     clearMessage();
-
 }
-
 
 
 function showMessage(message, type) {
@@ -281,9 +234,7 @@ function showMessage(message, type) {
 
     box.className =
         "message " + type;
-
 }
-
 
 
 function clearMessage() {
@@ -294,9 +245,7 @@ function clearMessage() {
     box.textContent = "";
 
     box.className = "message";
-
 }
-
 
 
 async function signupCustomer() {
@@ -306,7 +255,6 @@ async function signupCustomer() {
             .getElementById("signupName")
             .value
             .trim();
-
 
     const phone =
         document
@@ -326,7 +274,7 @@ async function signupCustomer() {
     }
 
 
-    if (!/^\d{10}$/.test(phone)) {
+    if (!/^[0-9]{10}$/.test(phone)) {
 
         showMessage(
             "Please enter a valid 10-digit mobile number.",
@@ -340,34 +288,30 @@ async function signupCustomer() {
     try {
 
         const response =
-            await fetch(
-                "/api/customers/signup",
-                {
-                    method: "POST",
+            await fetch("/api/customers/signup", {
 
-                    headers: {
-                        "Content-Type":
-                            "application/json"
-                    },
+                method: "POST",
 
-                    body: JSON.stringify({
-                        name: name,
-                        phone: phone
-                    })
-                }
-            );
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify({
+                    name: name,
+                    phone: phone
+                })
+
+            });
 
 
         const data =
             await response.json();
 
 
-        if (!response.ok ||
-            !data.success) {
+        if (!data.success) {
 
             showMessage(
-                data.message ||
-                "Signup failed.",
+                data.message || "Signup failed.",
                 "error"
             );
 
@@ -375,45 +319,29 @@ async function signupCustomer() {
         }
 
 
-        // Save customer details
-
         localStorage.setItem(
             "customerPhone",
-            data.customer.phone
-        );
-
-        localStorage.setItem(
-            "customerName",
-            data.customer.name
-        );
-
-        localStorage.setItem(
-            "customerId",
-            data.customer.id
+            phone
         );
 
 
         showMessage(
-            "Account created successfully! 🎉",
+            "✅ Account created successfully!",
             "success"
         );
 
 
-        setTimeout(
-            () => {
-                window.location.href =
-                    "my-services.html";
-            },
-            1000
-        );
+        setTimeout(() => {
+
+            window.location.href =
+                "my-services.html";
+
+        }, 700);
 
 
     } catch (error) {
 
-        console.error(
-            "Signup error:",
-            error
-        );
+        console.error(error);
 
         showMessage(
             "Server error. Please try again.",
@@ -425,7 +353,6 @@ async function signupCustomer() {
 }
 
 
-
 async function loginCustomer() {
 
     const phone =
@@ -435,7 +362,7 @@ async function loginCustomer() {
             .trim();
 
 
-    if (!/^\d{10}$/.test(phone)) {
+    if (!/^[0-9]{10}$/.test(phone)) {
 
         showMessage(
             "Please enter a valid 10-digit mobile number.",
@@ -450,19 +377,7 @@ async function loginCustomer() {
 
         const response =
             await fetch(
-                "/api/customers/login",
-                {
-                    method: "POST",
-
-                    headers: {
-                        "Content-Type":
-                            "application/json"
-                    },
-
-                    body: JSON.stringify({
-                        phone: phone
-                    })
-                }
+                "/api/customers/login/" + phone
             );
 
 
@@ -470,12 +385,10 @@ async function loginCustomer() {
             await response.json();
 
 
-        if (!response.ok ||
-            !data.success) {
+        if (!data.success) {
 
             showMessage(
-                data.message ||
-                "Login failed.",
+                data.message || "Account not found.",
                 "error"
             );
 
@@ -485,30 +398,27 @@ async function loginCustomer() {
 
         localStorage.setItem(
             "customerPhone",
-            data.customer.phone
-        );
-
-        localStorage.setItem(
-            "customerName",
-            data.customer.name
-        );
-
-        localStorage.setItem(
-            "customerId",
-            data.customer.id
+            phone
         );
 
 
-        window.location.href =
-            "my-services.html";
+        showMessage(
+            "✅ Login successful!",
+            "success"
+        );
+
+
+        setTimeout(() => {
+
+            window.location.href =
+                "my-services.html";
+
+        }, 500);
 
 
     } catch (error) {
 
-        console.error(
-            "Login error:",
-            error
-        );
+        console.error(error);
 
         showMessage(
             "Server error. Please try again.",
