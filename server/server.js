@@ -1154,7 +1154,36 @@ app.put("/api/admin/reviews/:id", async (req, res) => {
 // SERVER
 // ===============================
 // ================= PRODUCT ORDERS API =================
+// GET CUSTOMER PRODUCT ORDERS BY PHONE
+app.get("/api/product-orders/customer/:phone", async (req, res) => {
+  try {
 
+    const phone = req.params.phone;
+
+    const orders = await mongoose.connection.db
+      .collection("productorders")
+      .find({
+        "customer.mobile": phone
+      })
+      .sort({ createdAt: -1 })
+      .toArray();
+
+    res.json({
+      success: true,
+      orders: orders
+    });
+
+  } catch (error) {
+
+    console.error("Customer product orders error:", error);
+
+    res.status(500).json({
+      success: false,
+      message: "Customer orders load nahi ho paaye"
+    });
+
+  }
+});
 // GET ALL PRODUCT ORDERS - ADMIN
 app.get("/api/product-orders", async (req, res) => {
   try {

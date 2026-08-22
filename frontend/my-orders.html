@@ -229,20 +229,18 @@ async function loadMyOrders() {
 
     try {
 
-        const response =
-            const phone = localStorage.getItem("customerPhone");
+    const phone = localStorage.getItem("customerPhone");
 
-if (!phone) {
-    window.location.href = "login.html";
-    return;
-}
+    if (!phone) {
+        window.location.href = "login.html";
+        return;
+    }
 
-const response = await fetch(
-    "/api/product-orders/customer/" + phone
-);
+    const response = await fetch(
+        "/api/product-orders/customer/" + phone
+    );
 
-        const data =
-            await response.json();
+    const data = await response.json();
 
 
         if (
