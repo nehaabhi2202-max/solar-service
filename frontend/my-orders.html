@@ -224,103 +224,208 @@
 
 async function loadMyOrders() {
 
-    const container = document.getElementById("ordersContainer");
+    const container =
+        document.getElementById("ordersContainer");
 
     try {
 
-        const response = await fetch("/api/product-orders");
-        const data = await response.json();
+        const response =
+            await fetch("/api/product-orders");
 
-        if (!data.success || !data.orders || data.orders.length === 0) {
+        const data =
+            await response.json();
+
+
+        if (
+            !data.success ||
+            !data.orders ||
+            data.orders.length === 0
+        ) {
 
             container.innerHTML = `
                 <div class="order-card">
+
                     <h3>No orders yet</h3>
-                    <p>Your product orders will appear here.</p>
+
+                    <p>
+                        Your product orders will appear here.
+                    </p>
+
                 </div>
             `;
 
             return;
         }
 
-        const order = data.orders[0];
 
-        const status = order.status || "confirmed";
+        container.innerHTML = "";
 
-        const statusText =
-            status.charAt(0).toUpperCase() + status.slice(1);
 
-        const orderDate = order.createdAt
-            ? new Date(order.createdAt).toLocaleDateString("en-IN", {
-                day: "2-digit",
-                month: "short",
-                year: "numeric"
-            })
-            : "N/A";
+        data.orders.forEach(order => {
 
-        const orderId = order._id || "N/A";
-        const productName = order.productName || "Solar Product";
-        const quantity = order.quantity || 1;
-        const amount = order.totalAmount || order.price || 0;
-        const payment = order.paymentMethod || "Online";
+            const status =
+                order.status || "confirmed";
 
-        container.innerHTML = `
 
-            <div class="order-card">
+            const statusText =
+                status.charAt(0).toUpperCase() +
+                status.slice(1);
+
+
+            const orderDate =
+                order.createdAt
+                    ? new Date(
+                        order.createdAt
+                    ).toLocaleDateString(
+                        "en-IN",
+                        {
+                            day: "2-digit",
+                            month: "short",
+                            year: "numeric"
+                        }
+                    )
+                    : "N/A";
+
+
+            const orderId =
+                order._id || "N/A";
+
+
+            const productName =
+                order.productName ||
+                "Solar Product";
+
+
+            const quantity =
+                order.quantity || 1;
+
+
+            const amount =
+                order.totalAmount ||
+                order.price ||
+                0;
+
+
+            const payment =
+                order.paymentMethod ||
+                "Online";
+
+
+            const card =
+                document.createElement("div");
+
+
+            card.className =
+                "order-card";
+
+
+            card.innerHTML = `
 
                 <div class="order-top">
 
                     <div class="order-id">
+
                         Order #${orderId}
+
                     </div>
 
+
                     <div class="status">
+
                         ${statusText}
+
                     </div>
 
                 </div>
+
 
                 <div class="product">
 
                     <div class="product-image">
+
                         ☀️
+
                     </div>
+
 
                     <div class="product-info">
 
-                        <h3>${productName}</h3>
+                        <h3>
+                            ${productName}
+                        </h3>
 
-                        <p>Qty: ${quantity}</p>
 
-                        <p>Solar Product</p>
+                        <p>
+                            Qty: ${quantity}
+                        </p>
+
+
+                        <p>
+                            Solar Product
+                        </p>
 
                     </div>
 
                 </div>
+
 
                 <div class="details">
 
-                    <div class="row">
-                        <span class="label">Order Date</span>
-                        <span class="value">${orderDate}</span>
-                    </div>
 
                     <div class="row">
-                        <span class="label">Payment</span>
-                        <span class="value">✅ ${payment}</span>
+
+                        <span class="label">
+                            Order Date
+                        </span>
+
+                        <span class="value">
+                            ${orderDate}
+                        </span>
+
                     </div>
 
-                    <div class="row">
-                        <span class="label">Delivery</span>
-                        <span class="value">3–5 Days</span>
-                    </div>
 
                     <div class="row">
-                        <span class="label">Total Amount</span>
-                        <span class="value total">₹${amount}</span>
+
+                        <span class="label">
+                            Payment
+                        </span>
+
+                        <span class="value">
+                            ✅ ${payment}
+                        </span>
+
                     </div>
+
+
+                    <div class="row">
+
+                        <span class="label">
+                            Delivery
+                        </span>
+
+                        <span class="value">
+                            3–5 Days
+                        </span>
+
+                    </div>
+
+
+                    <div class="row">
+
+                        <span class="label">
+                            Total Amount
+                        </span>
+
+                        <span class="value total">
+                            ₹${amount}
+                        </span>
+
+                    </div>
+
 
                 </div>
+
 
                 <button
                     class="track-btn"
@@ -336,26 +441,50 @@ async function loadMyOrders() {
                         font-weight:bold;
                         cursor:pointer;
                     "
-                    onclick="window.location.href='track-order.html?id=${orderId}'">
+                    onclick="
+                        window.location.href =
+                        'track-order.html?id=${orderId}'
+                    "
+                >
 
                     🚚 Track Order
 
                 </button>
 
-            </div>
-        `;
+            `;
+
+
+            container.appendChild(card);
+
+        });
+
 
     } catch (error) {
 
-        console.error("Load orders error:", error);
+        console.error(
+            "Load orders error:",
+            error
+        );
+
 
         container.innerHTML = `
+
             <div class="order-card">
-                <h3>❌ Unable to load orders</h3>
-                <p>Please try again later.</p>
+
+                <h3>
+                    ❌ Unable to load orders
+                </h3>
+
+                <p>
+                    Please try again later.
+                </p>
+
             </div>
+
         `;
+
     }
+
 }
 
 loadMyOrders();
