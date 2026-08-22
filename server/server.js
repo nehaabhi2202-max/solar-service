@@ -1205,12 +1205,23 @@ app.post("/api/product-orders", async (req, res) => {
   }
 });
 
-// GET PRODUCT ORDERS - ADMIN
-app.get("/api/product-orders", async (req, res) => {
+// GET PRODUCT ORDERS - CUSTOMER
+app.get("/api/product-orders/customer/:phone", async (req, res) => {
+
   try {
+
+    const phone = req.params.phone;
+
     const orders = await mongoose.connection.db
       .collection("productorders")
-      .find({})
+      .find({
+        $or: [
+          { mobile: phone },
+          { phone: phone },
+          { customerPhone: phone },
+          { "customer.mobile": phone }
+        ]
+      })
       .sort({ createdAt: -1 })
       .toArray();
 
@@ -1220,13 +1231,16 @@ app.get("/api/product-orders", async (req, res) => {
     });
 
   } catch (error) {
-    console.error("Get product orders error:", error);
+
+    console.error("Customer product orders error:", error);
 
     res.status(500).json({
       success: false,
-      message: "Product orders load nahi ho paaye"
+      message: "Customer orders load nahi ho paaye"
     });
+
   }
+
 });
 // UPDATE PRODUCT ORDER STATUS - ADMIN
 app.put("/api/product-orders/:id/status", async (req, res) => {
