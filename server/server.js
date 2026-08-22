@@ -957,7 +957,96 @@ app.put("/api/admin/reviews/:id", async (req, res) => {
 // ===============================
 // SERVER
 // ===============================
+// ================= PRODUCT ORDERS API =================
 
+// GET ALL PRODUCT ORDERS - ADMIN
+app.get("/api/product-orders", async (req, res) => {
+  try {
+    const orders = await mongoose.connection.db
+      .collection("productorders")
+      .find({})
+      .sort({ createdAt: -1 })
+      .toArray();
+
+    res.json({
+      success: true,
+      orders
+    });
+  } catch (error) {
+    console.error("Load product orders error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Orders load nahi ho paaye"
+    });
+  }
+});
+
+
+// CREATE PRODUCT ORDER - CUSTOMER
+app.post("/api/product-orders", async (req, res) => {
+  try {
+    const order = {
+      ...req.body,
+      status: req.body.status || "confirmed",
+      createdAt: new Date()
+    };
+
+    const result = await mongoose.connection.db
+      .collection("productorders")
+      .insertOne(order);
+
+    res.json({
+      success: true,
+      message: "Order placed successfully",
+      orderId: result.insertedId
+    });
+  } catch (error) {
+    console.error("Create product order error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Order save nahi ho paaya"
+    });
+  }
+});
+
+
+// UPDATE PRODUCT ORDER STATUS - ADMIN
+app.put("/api/product-orders/:id/status", async (req, res) => {
+  try {
+    const { ObjectId } = mongoose.Types;
+    const { status } = req.body;
+
+    const result = await mongoose.connection.db
+      .collection("productorders")
+      .updateOne(
+        { _id: new ObjectId(req.params.id) },
+        {
+          $set: {
+            status: status,
+            updatedAt: new Date()
+          }
+        }
+      );
+
+    if (result.matchedCount === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "Order nahi mila"
+      });
+    }
+
+    res.json({
+      success: true,
+      message: "Order status updated"
+    });
+  } catch (error) {
+    console.error("Update order status error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Order status update nahi ho paaya"
+    });
+  }
+});
 const PORT = process.env.PORT || 5000;
 
 

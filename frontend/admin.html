@@ -945,7 +945,257 @@ async function updateReview(id, approved) {
 
 // Load reviews when Admin Panel opens
 loadReviews();
+// ================= PRODUCT ORDERS =================
 
+async function loadProductOrders() {
+
+    const existing = document.getElementById("productOrdersSection");
+
+    if (existing) {
+        existing.remove();
+    }
+
+    const section = document.createElement("div");
+
+    section.id = "productOrdersSection";
+
+    section.style.cssText = `
+        margin:25px 0;
+        padding:20px;
+        background:#ffffff;
+        border-radius:16px;
+        box-shadow:0 4px 15px rgba(0,0,0,0.08);
+    `;
+
+    section.innerHTML = `
+        <h2 style="
+            color:#1255c5;
+            margin-bottom:18px;
+        ">
+            📦 Product Orders
+        </h2>
+
+        <div id="productOrdersContainer">
+            <p style="color:#777;">
+                Loading product orders...
+            </p>
+        </div>
+    `;
+
+    document.querySelector(".app").appendChild(section);
+
+    const container =
+        document.getElementById("productOrdersContainer");
+
+    try {
+
+        const response = await fetch("/api/orders");
+
+        const data = await response.json();
+
+        if (!data.success || !data.orders || data.orders.length === 0) {
+
+            container.innerHTML = `
+                <div style="
+                    padding:20px;
+                    text-align:center;
+                    background:#f5f8ff;
+                    border-radius:12px;
+                    color:#666;
+                ">
+                    📦 No product orders yet.
+                </div>
+            `;
+
+            return;
+        }
+
+        container.innerHTML = "";
+
+        data.orders.forEach(order => {
+
+            const card = document.createElement("div");
+
+            card.style.cssText = `
+                padding:18px;
+                margin-bottom:15px;
+                border:1px solid #e5e5e5;
+                border-radius:12px;
+                background:#fafafa;
+            `;
+
+            card.innerHTML = `
+
+                <div style="
+                    display:flex;
+                    justify-content:space-between;
+                    align-items:center;
+                    margin-bottom:12px;
+                ">
+
+                    <strong>
+                        Order #${order.orderId || order._id || "N/A"}
+                    </strong>
+
+                    <span style="
+                        background:#e7f8ed;
+                        color:#159447;
+                        padding:6px 12px;
+                        border-radius:20px;
+                        font-size:13px;
+                    ">
+                        ${order.status || "Confirmed"}
+                    </span>
+
+                </div>
+
+                <p>
+                    📦 <strong>Product:</strong>
+                    ${order.productName || "Solar Product"}
+                </p>
+
+                <p>
+                    👤 <strong>Customer:</strong>
+                    ${order.customerName || "N/A"}
+                </p>
+
+                <p>
+                    📞 <strong>Mobile:</strong>
+                    ${order.mobile || "N/A"}
+                </p>
+
+                <p>
+                    💰 <strong>Amount:</strong>
+                    ₹${order.totalAmount || order.amount || "0"}
+                </p>
+
+                <p>
+                    💳 <strong>Payment:</strong>
+                    ${order.paymentMethod || "Online"}
+                </p>
+
+                <button
+                    onclick="updateProductOrderStatus('${order._id || order.orderId}', 'Packed')"
+                    style="
+                        background:#1255c5;
+                        color:white;
+                        border:0;
+                        padding:10px 16px;
+                        border-radius:8px;
+                        cursor:pointer;
+                        margin-top:8px;
+                    "
+                >
+                    📦 Mark Packed
+                </button>
+
+                <button
+                    onclick="updateProductOrderStatus('${order._id || order.orderId}', 'Shipped')"
+                    style="
+                        background:#f59e0b;
+                        color:white;
+                        border:0;
+                        padding:10px 16px;
+                        border-radius:8px;
+                        cursor:pointer;
+                        margin-top:8px;
+                    "
+                >
+                    🚚 Mark Shipped
+                </button>
+
+                <button
+                    onclick="updateProductOrderStatus('${order._id || order.orderId}', 'Delivered')"
+                    style="
+                        background:#159447;
+                        color:white;
+                        border:0;
+                        padding:10px 16px;
+                        border-radius:8px;
+                        cursor:pointer;
+                        margin-top:8px;
+                    "
+                >
+                    ✅ Delivered
+                </button>
+
+            `;
+
+            container.appendChild(card);
+
+        });
+
+    } catch (error) {
+
+        console.log(error);
+
+        container.innerHTML = `
+            <div style="
+                padding:18px;
+                background:#fff4f4;
+                border-radius:12px;
+                color:#c62828;
+            ">
+                ❌ Product orders could not be loaded.
+            </div>
+        `;
+    }
+}
+
+
+// UPDATE PRODUCT ORDER STATUS
+
+async function updateProductOrderStatus(orderId, status) {
+
+    try {
+
+        const response = await fetch(
+            "/api/orders/" + orderId + "/status",
+            {
+                method: "PUT",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify({
+                    status: status
+                })
+            }
+        );
+
+        const data = await response.json();
+
+        if (data.success) {
+
+            alert(
+                "✅ Order status updated to " + status
+            );
+
+            loadProductOrders();
+
+        } else {
+
+            alert(
+                "❌ " +
+                (data.message || "Status update failed")
+            );
+        }
+
+    } catch (error) {
+
+        console.log(error);
+
+        alert(
+            "❌ Server error while updating order."
+        );
+    }
+}
+
+
+// LOAD PRODUCT ORDERS
+
+loadProductOrders();
 </script>
 </body>
 
