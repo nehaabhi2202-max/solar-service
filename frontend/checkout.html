@@ -423,6 +423,7 @@
 
 <script>
 
+
 async function placeOrder() {
 
     const name =
@@ -440,21 +441,34 @@ async function placeOrder() {
     const pincode =
         document.getElementById("pincode").value.trim();
 
-    const paymentMethod =
-        document.querySelector('input[name="payment"]:checked')?.value || "UPI";
+    const payment =
+        document.querySelector('input[name="payment"]:checked').value;
 
 
-    // CHECK DELIVERY DETAILS
-    if (!name || !mobile || !address || !city || !pincode) {
+    if (!name ||
+        !mobile ||
+        !address ||
+        !city ||
+        !pincode) {
 
         alert("Please fill all delivery details.");
-
         return;
     }
 
 
-    // ORDER DATA
     const orderData = {
+
+        customerName: name,
+
+        mobile: mobile,
+
+        address: address,
+
+        city: city,
+
+        pincode: pincode,
+
+        paymentMethod: payment,
 
         productName: "Loom Solar 550W Panel",
 
@@ -464,17 +478,8 @@ async function placeOrder() {
 
         totalAmount: 18999,
 
-        customer: {
-            name: name,
-            mobile: mobile,
-            address: address,
-            city: city,
-            pincode: pincode
-        },
-
-        paymentMethod: paymentMethod,
-
         status: "confirmed"
+
     };
 
 
@@ -507,9 +512,16 @@ async function placeOrder() {
         }
 
 
-        // ORDER SUCCESS PAGE
+        // Order successfully saved
+        localStorage.setItem(
+            "lastOrderId",
+            data.orderId
+        );
+
+
         window.location.href =
             "order-success.html";
+
 
     } catch (error) {
 
@@ -519,10 +531,13 @@ async function placeOrder() {
         );
 
         alert(
-            "Server error. Please try again."
+            "Server se connection nahi ho paaya."
         );
+
     }
+
 }
+
 
 </script>
 
