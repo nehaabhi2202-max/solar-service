@@ -704,9 +704,18 @@
                     ₹15,499
                 </div>
 
-                <button class="add-cart">
-                    Add to Cart
-                </button>
+                <button class="add-cart"
+        onclick="event.stopPropagation(); addProductToCart('Microtek Inverter 1.5KVA', 29999, '⚡')">
+    Add to Cart
+</button>
+<button class="add-cart"
+        onclick="event.stopPropagation(); addProductToCart('Solar Battery 150Ah', 15499, '🔋')">
+    Add to Cart
+</button>
+<button class="add-cart"
+        onclick="event.stopPropagation(); addProductToCart('DC Solar Cable 6 Sqmm', 1299, '🔌')">
+    Add to Cart
+</button>
 
             </div>
 
@@ -900,7 +909,43 @@
 
 </script>
 
+<script>
 
+function addProductToCart(name, price, icon) {
+
+    let cart =
+        JSON.parse(
+            localStorage.getItem("solarCart") || "[]"
+        );
+
+    const existing =
+        cart.find(item => item.name === name);
+
+    if (existing) {
+
+        existing.quantity =
+            (Number(existing.quantity) || 1) + 1;
+
+    } else {
+
+        cart.push({
+            name: name,
+            price: Number(price),
+            quantity: 1,
+            icon: icon
+        });
+
+    }
+
+    localStorage.setItem(
+        "solarCart",
+        JSON.stringify(cart)
+    );
+
+    window.location.href = "cart.html";
+}
+
+</script>
 </body>
 
 </html>
