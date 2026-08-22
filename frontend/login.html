@@ -376,9 +376,19 @@ async function loginCustomer() {
     try {
 
         const response =
-            await fetch(
-                "/api/customers/login/" + phone
-            );
+    await fetch("/api/customers/login", {
+
+        method: "POST",
+
+        headers: {
+            "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify({
+            phone: phone
+        })
+
+    });
 
 
         const data =
