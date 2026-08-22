@@ -199,112 +199,13 @@
 
         <!-- ORDER -->
 
-        <div class="order-card">
+<div id="ordersContainer">
 
-            <div class="order-top">
+    <p style="text-align:center; color:#777;">
+        Loading your orders...
+    </p>
 
-                <div class="order-id">
-                    Order #SC123456
-                </div>
-
-                <div class="status">
-                    Confirmed
-                </div>
-
-            </div>
-
-
-            <div class="product">
-
-                <div class="product-image">
-                    ☀️
-                </div>
-
-                <div class="product-info">
-
-                    <h3>
-                        Loom Solar 550W Panel
-                    </h3>
-
-                    <p>
-                        Qty: 1
-                    </p>
-
-                    <p>
-                        Solar Panel
-                    </p>
-
-                </div>
-
-            </div>
-
-
-            <div class="details">
-
-                <div class="row">
-
-                    <span class="label">
-                        Order Date
-                    </span>
-
-                    <span class="value">
-                        22 Aug 2026
-                    </span>
-
-                </div>
-
-
-                <div class="row">
-
-                    <span class="label">
-                        Payment
-                    </span>
-
-                    <span class="value">
-                        ✅ Successful
-                    </span>
-
-                </div>
-
-
-                <div class="row">
-
-                    <span class="label">
-                        Delivery
-                    </span>
-
-                    <span class="value">
-                        3–5 Days
-                    </span>
-
-                </div>
-
-
-                <div class="row">
-
-                    <span class="label">
-                        Total Amount
-                    </span>
-
-                    <span class="value total">
-                        ₹18,999
-                    </span>
-
-                </div>
-
-            </div>
-
-<button
-    class="track-btn"
-    style="display:block; width:100%; padding:15px; background:#0866d5; color:white; border:none; border-radius:10px; font-size:16px; font-weight:bold; cursor:pointer;"
-    onclick="window.location.href='track-order.html'">
-    🚚 Track Order
-</button>
-
-        </div>
-
-
-        <!-- SHOP MORE -->
+</div>
 
         <button
             class="shop-btn"
@@ -321,15 +222,143 @@
 
 <script>
 
-function trackOrder() {
+async function loadMyOrders() {
 
-    alert(
-        "Order #SC123456\n\n" +
-        "Status: Confirmed\n" +
-        "Your order will be dispatched soon."
-    );
+    const container = document.getElementById("ordersContainer");
 
+    try {
+
+        const response = await fetch("/api/product-orders");
+        const data = await response.json();
+
+        if (!data.success || !data.orders || data.orders.length === 0) {
+
+            container.innerHTML = `
+                <div class="order-card">
+                    <h3>No orders yet</h3>
+                    <p>Your product orders will appear here.</p>
+                </div>
+            `;
+
+            return;
+        }
+
+        const order = data.orders[0];
+
+        const status = order.status || "confirmed";
+
+        const statusText =
+            status.charAt(0).toUpperCase() + status.slice(1);
+
+        const orderDate = order.createdAt
+            ? new Date(order.createdAt).toLocaleDateString("en-IN", {
+                day: "2-digit",
+                month: "short",
+                year: "numeric"
+            })
+            : "N/A";
+
+        const orderId = order._id || "N/A";
+        const productName = order.productName || "Solar Product";
+        const quantity = order.quantity || 1;
+        const amount = order.totalAmount || order.price || 0;
+        const payment = order.paymentMethod || "Online";
+
+        container.innerHTML = `
+
+            <div class="order-card">
+
+                <div class="order-top">
+
+                    <div class="order-id">
+                        Order #${orderId}
+                    </div>
+
+                    <div class="status">
+                        ${statusText}
+                    </div>
+
+                </div>
+
+                <div class="product">
+
+                    <div class="product-image">
+                        ☀️
+                    </div>
+
+                    <div class="product-info">
+
+                        <h3>${productName}</h3>
+
+                        <p>Qty: ${quantity}</p>
+
+                        <p>Solar Product</p>
+
+                    </div>
+
+                </div>
+
+                <div class="details">
+
+                    <div class="row">
+                        <span class="label">Order Date</span>
+                        <span class="value">${orderDate}</span>
+                    </div>
+
+                    <div class="row">
+                        <span class="label">Payment</span>
+                        <span class="value">✅ ${payment}</span>
+                    </div>
+
+                    <div class="row">
+                        <span class="label">Delivery</span>
+                        <span class="value">3–5 Days</span>
+                    </div>
+
+                    <div class="row">
+                        <span class="label">Total Amount</span>
+                        <span class="value total">₹${amount}</span>
+                    </div>
+
+                </div>
+
+                <button
+                    class="track-btn"
+                    style="
+                        display:block;
+                        width:100%;
+                        padding:15px;
+                        background:#0866d5;
+                        color:white;
+                        border:none;
+                        border-radius:10px;
+                        font-size:16px;
+                        font-weight:bold;
+                        cursor:pointer;
+                    "
+                    onclick="window.location.href='track-order.html?id=${orderId}'">
+
+                    🚚 Track Order
+
+                </button>
+
+            </div>
+        `;
+
+    } catch (error) {
+
+        console.error("Load orders error:", error);
+
+        container.innerHTML = `
+            <div class="order-card">
+                <h3>❌ Unable to load orders</h3>
+                <p>Please try again later.</p>
+            </div>
+        `;
+    }
 }
+
+loadMyOrders();
 
 </script>
 
