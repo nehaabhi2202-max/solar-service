@@ -1056,12 +1056,12 @@ async function loadProductOrders() {
 
                 <p>
                     👤 <strong>Customer:</strong>
-                    ${order.customerName || "N/A"}
+                   ${order.customer?.name || order.customerName || "N/A"}
                 </p>
 
                 <p>
                     📞 <strong>Mobile:</strong>
-                    ${order.mobile || "N/A"}
+                    ${order.customer?.mobile || order.mobile || "N/A"}
                 </p>
 
                 <p>
