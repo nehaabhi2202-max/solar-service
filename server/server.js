@@ -1009,7 +1009,29 @@ app.post("/api/product-orders", async (req, res) => {
   }
 });
 
+// GET PRODUCT ORDERS - ADMIN
+app.get("/api/product-orders", async (req, res) => {
+  try {
+    const orders = await mongoose.connection.db
+      .collection("productorders")
+      .find({})
+      .sort({ createdAt: -1 })
+      .toArray();
 
+    res.json({
+      success: true,
+      orders: orders
+    });
+
+  } catch (error) {
+    console.error("Get product orders error:", error);
+
+    res.status(500).json({
+      success: false,
+      message: "Product orders load nahi ho paaye"
+    });
+  }
+});
 // UPDATE PRODUCT ORDER STATUS - ADMIN
 app.put("/api/product-orders/:id/status", async (req, res) => {
   try {
