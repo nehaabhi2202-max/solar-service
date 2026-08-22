@@ -2,207 +2,888 @@
 <html lang="en">
 
 <head>
-
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <meta name="viewport"
-        content="width=device-width, initial-scale=1.0">
+    <title>Solar Care | Solar Services & Products</title>
 
-    <title>Solar Service</title>
+    <link rel="stylesheet" href="style.css">
 
-    <link rel="stylesheet"
-        href="style.css">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f5f8f6;
+            color: #17251d;
+        }
+
+        .app {
+            max-width: 520px;
+            margin: auto;
+            background: #fff;
+            min-height: 100vh;
+        }
+
+        /* HEADER */
+
+        .top-header {
+            background: linear-gradient(135deg, #0757c9, #123f9c);
+            color: white;
+            padding: 22px 20px 28px;
+            border-radius: 0 0 25px 25px;
+        }
+
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand {
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .location {
+            font-size: 13px;
+            opacity: .9;
+            margin-top: 5px;
+        }
+
+        .profile-btn {
+            background: rgba(255,255,255,.18);
+            border-radius: 50%;
+            width: 42px;
+            height: 42px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        /* SEARCH */
+
+        .search {
+            margin-top: 22px;
+            background: white;
+            border-radius: 12px;
+            padding: 13px 16px;
+            color: #777;
+            font-size: 14px;
+        }
+
+        /* HERO */
+
+        .hero {
+            margin: 18px;
+            padding: 24px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, #e9f7ed, #f5fff7);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .hero h1 {
+            margin: 0;
+            font-size: 28px;
+            line-height: 1.15;
+        }
+
+        .hero h1 span {
+            color: #149447;
+        }
+
+        .hero p {
+            color: #59665e;
+            font-size: 14px;
+            line-height: 1.5;
+            max-width: 290px;
+        }
+
+        .hero-sun {
+            position: absolute;
+            right: 18px;
+            top: 25px;
+            font-size: 65px;
+        }
+
+        .hero button {
+            border: none;
+            background: #0757c9;
+            color: white;
+            padding: 13px 20px;
+            border-radius: 9px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* SECTION */
+
+        .section {
+            padding: 0 18px;
+            margin-top: 24px;
+        }
+
+        .section-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 14px;
+        }
+
+        .section-head h2 {
+            margin: 0;
+            font-size: 20px;
+        }
+
+        .view-all {
+            color: #0757c9;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        /* CATEGORIES */
+
+        .categories {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        .category {
+            text-align: center;
+            padding: 12px 5px;
+            border: 1px solid #e7ece9;
+            border-radius: 14px;
+            background: white;
+        }
+
+        .category-icon {
+            font-size: 28px;
+        }
+
+        .category p {
+            margin: 7px 0 0;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        /* SERVICES */
+
+        .service-list {
+            display: flex;
+            gap: 12px;
+            overflow-x: auto;
+            padding-bottom: 5px;
+        }
+
+        .service {
+            min-width: 155px;
+            border: 1px solid #e5ebe7;
+            border-radius: 15px;
+            padding: 16px;
+            background: white;
+        }
+
+        .service-icon {
+            font-size: 30px;
+        }
+
+        .service h3 {
+            font-size: 15px;
+            margin: 10px 0 5px;
+        }
+
+        .service p {
+            font-size: 12px;
+            color: #68736c;
+            margin: 0 0 12px;
+        }
+
+        .service button {
+            width: 100%;
+            border: 1px solid #0757c9;
+            background: white;
+            color: #0757c9;
+            border-radius: 7px;
+            padding: 8px;
+            font-weight: bold;
+        }
+
+        /* PRODUCTS */
+
+        .products {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .product {
+            border: 1px solid #e5ebe7;
+            border-radius: 15px;
+            overflow: hidden;
+            background: white;
+        }
+
+        .product-image {
+            height: 125px;
+            background: linear-gradient(135deg, #e9f1fa, #f7fbff);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 65px;
+        }
+
+        .product-info {
+            padding: 12px;
+        }
+
+        .product h3 {
+            font-size: 14px;
+            margin: 0 0 7px;
+        }
+
+        .rating {
+            color: #f5a623;
+            font-size: 12px;
+        }
+
+        .price {
+            font-weight: bold;
+            margin-top: 8px;
+        }
+
+        .old-price {
+            color: #999;
+            text-decoration: line-through;
+            font-size: 11px;
+            margin-left: 5px;
+        }
+
+        .add-cart {
+            width: 100%;
+            margin-top: 10px;
+            border: 1px solid #0757c9;
+            background: white;
+            color: #0757c9;
+            padding: 8px;
+            border-radius: 7px;
+            font-weight: bold;
+        }
+
+        /* WHY US */
+
+        .why-us {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        .why {
+            background: #f7faf8;
+            border-radius: 14px;
+            padding: 15px 8px;
+            text-align: center;
+        }
+
+        .why-icon {
+            font-size: 25px;
+        }
+
+        .why p {
+            font-size: 11px;
+            font-weight: 600;
+            margin: 7px 0 0;
+        }
+
+        /* SUPPORT */
+
+        .support {
+            margin: 24px 18px;
+            background: #eef5ff;
+            padding: 20px;
+            border-radius: 18px;
+        }
+
+        .support h2 {
+            margin-top: 0;
+            font-size: 19px;
+        }
+
+        .support p {
+            font-size: 13px;
+            color: #68736c;
+        }
+
+        .support-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .support-buttons button {
+            flex: 1;
+            padding: 11px;
+            border-radius: 8px;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .call {
+            background: #0757c9;
+            color: white;
+        }
+
+        .whatsapp {
+            background: #20b85a;
+            color: white;
+        }
+
+        /* BOTTOM NAV */
+
+        .bottom-nav {
+            position: sticky;
+            bottom: 0;
+            background: white;
+            border-top: 1px solid #e5e5e5;
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            padding: 10px 4px 8px;
+            z-index: 10;
+        }
+
+        .nav-item {
+            text-align: center;
+            font-size: 11px;
+            color: #6c756f;
+            cursor: pointer;
+        }
+
+        .nav-icon {
+            display: block;
+            font-size: 20px;
+            margin-bottom: 3px;
+        }
+
+        .nav-item.active {
+            color: #0757c9;
+            font-weight: bold;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: #89928d;
+            font-size: 11px;
+        }
+    </style>
 
 </head>
 
 
 <body>
 
-    <div class="app">
+<div class="app">
 
-        <!-- HEADER -->
+    <!-- HEADER -->
 
-        <div class="logo">
-            ☀️ Solar Service
-        </div>
+    <div class="top-header">
 
-        <p class="subtitle">
-            Your trusted solar service partner
-        </p>
+        <div class="header-row">
 
+            <div>
+                <div class="brand">
+                    ☀️ Solar Care
+                </div>
 
-        <!-- HERO -->
+                <div class="location">
+                    📍 Noida, Uttar Pradesh
+                </div>
+            </div>
 
-        <div class="card">
-
-            <h1>
-                Power Your Home with
-                <br>
-                <span style="color:#1f8f45;">
-                    Clean Solar Energy
-                </span>
-            </h1>
-
-            <p>
-                Professional solar installation,
-                repair, cleaning and maintenance
-                services at your doorstep.
-            </p>
-
-
-            <button
-                onclick="window.location.href='booking.html'">
-
-                🔧 Book a Service
-
-            </button>
-
-
-            <button
-                onclick="window.location.href='track-booking.html'">
-
-                🔎 Track Booking
-
-            </button>
-
-
-            <button
-                onclick="window.location.href='login.html'">
-
-                📋 My Services
-
-            </button>
+            <div class="profile-btn"
+                 onclick="window.location.href='login.html'">
+                👤
+            </div>
 
         </div>
 
 
-        <!-- SERVICES -->
-
-        <div class="card">
-
-            <h2>
-                🛠️ Our Services
-            </h2>
-
-
-            <p>
-                ☀️ Solar Panel Installation
-            </p>
-
-            <p>
-                🔧 Solar Panel Repair
-            </p>
-
-            <p>
-                🧹 Solar Panel Cleaning
-            </p>
-
-            <p>
-                ⚡ Inverter Service
-            </p>
-
-            <p>
-                🔋 Battery Service
-            </p>
-
+        <div class="search">
+            🔍 Search services, panels, batteries...
         </div>
-
-
-        <!-- WHY US -->
-
-        <div class="card">
-
-            <h2>
-                ⭐ Why Choose Us?
-            </h2>
-
-            <p>
-                ✅ Professional Service
-            </p>
-
-            <p>
-                ✅ Experienced Technicians
-            </p>
-
-            <p>
-                ✅ Quick Response
-            </p>
-
-            <p>
-                ✅ Reliable Solar Solutions
-            </p>
-
-        </div>
-
-
-        <!-- SUPPORT -->
-
-        <div class="card">
-
-            <h2>
-                📞 Need Help?
-            </h2>
-
-            <p>
-                Our support team is ready
-                to help you.
-            </p>
-
-
-            <button
-                onclick="callSupport()">
-
-                📞 Call Support
-
-            </button>
-
-
-            <button
-                onclick="whatsappSupport()">
-
-                💬 WhatsApp Support
-
-            </button>
-
-        </div>
-
-
-        <!-- FOOTER -->
-
-        <p style="
-            text-align:center;
-            color:#777;
-            margin-top:25px;
-            font-size:13px;
-        ">
-
-            © 2026 Solar Service
-            <br>
-            Clean Energy • Better Future ☀️
-
-        </p>
 
     </div>
 
 
-    <script>
+    <!-- HERO -->
 
-        function callSupport() {
+    <div class="hero">
 
-            window.location.href =
-                "tel:+918527148407";
+        <div class="hero-sun">
+            ☀️
+        </div>
 
-        }
+        <h1>
+            Power Your Home
+            <br>
+            with <span>Clean Energy</span>
+        </h1>
+
+        <p>
+            Professional solar installation,
+            repair, cleaning & maintenance
+            at your doorstep.
+        </p>
+
+        <button onclick="window.location.href='booking.html'">
+            Book a Service →
+        </button>
+
+    </div>
 
 
-        function whatsappSupport() {
+    <!-- CATEGORIES -->
 
-            window.location.href =
-                "https://wa.me/918527148407";
+    <div class="section">
 
-        }
+        <div class="section-head">
 
-    </script>
+            <h2>Shop by Category</h2>
+
+            <span class="view-all">
+                View All
+            </span>
+
+        </div>
+
+
+        <div class="categories">
+
+            <div class="category">
+                <div class="category-icon">☀️</div>
+                <p>Solar Panels</p>
+            </div>
+
+            <div class="category">
+                <div class="category-icon">⚡</div>
+                <p>Inverters</p>
+            </div>
+
+            <div class="category">
+                <div class="category-icon">🔋</div>
+                <p>Batteries</p>
+            </div>
+
+            <div class="category">
+                <div class="category-icon">🔌</div>
+                <p>Accessories</p>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- SERVICES -->
+
+    <div class="section">
+
+        <div class="section-head">
+
+            <h2>Popular Services</h2>
+
+            <span class="view-all">
+                View All
+            </span>
+
+        </div>
+
+
+        <div class="service-list">
+
+            <div class="service">
+
+                <div class="service-icon">
+                    ☀️
+                </div>
+
+                <h3>Panel Installation</h3>
+
+                <p>
+                    Professional installation
+                    by trained technicians.
+                </p>
+
+                <button onclick="window.location.href='booking.html'">
+                    Book Now
+                </button>
+
+            </div>
+
+
+            <div class="service">
+
+                <div class="service-icon">
+                    🔧
+                </div>
+
+                <h3>Panel Repair</h3>
+
+                <p>
+                    Quick diagnosis and
+                    reliable repair.
+                </p>
+
+                <button onclick="window.location.href='booking.html'">
+                    Book Now
+                </button>
+
+            </div>
+
+
+            <div class="service">
+
+                <div class="service-icon">
+                    🧹
+                </div>
+
+                <h3>Panel Cleaning</h3>
+
+                <p>
+                    Improve panel efficiency
+                    with professional cleaning.
+                </p>
+
+                <button onclick="window.location.href='booking.html'">
+                    Book Now
+                </button>
+
+            </div>
+
+
+            <div class="service">
+
+                <div class="service-icon">
+                    ⚡
+                </div>
+
+                <h3>Inverter Service</h3>
+
+                <p>
+                    Inspection and maintenance
+                    for your inverter.
+                </p>
+
+                <button onclick="window.location.href='booking.html'">
+                    Book Now
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- PRODUCTS -->
+
+    <div class="section">
+
+        <div class="section-head">
+
+            <h2>Featured Products</h2>
+
+            <span class="view-all">
+                View All
+            </span>
+
+        </div>
+
+
+        <div class="products">
+
+
+            <div class="product">
+
+                <div class="product-image">
+                    ☀️
+                </div>
+
+                <div class="product-info">
+
+                    <h3>
+                        Loom Solar 550W Panel
+                    </h3>
+
+                    <div class="rating">
+                        ⭐ 4.8 (120)
+                    </div>
+
+                    <div class="price">
+                        ₹18,999
+                        <span class="old-price">
+                            ₹22,999
+                        </span>
+                    </div>
+
+                    <button class="add-cart">
+                        Add to Cart
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <div class="product">
+
+                <div class="product-image">
+                    ⚡
+                </div>
+
+                <div class="product-info">
+
+                    <h3>
+                        Microtek Inverter 1.5KVA
+                    </h3>
+
+                    <div class="rating">
+                        ⭐ 4.6 (98)
+                    </div>
+
+                    <div class="price">
+                        ₹24,999
+                        <span class="old-price">
+                            ₹29,999
+                        </span>
+                    </div>
+
+                    <button class="add-cart">
+                        Add to Cart
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <div class="product">
+
+                <div class="product-image">
+                    🔋
+                </div>
+
+                <div class="product-info">
+
+                    <h3>
+                        Solar Battery 150Ah
+                    </h3>
+
+                    <div class="rating">
+                        ⭐ 4.7 (76)
+                    </div>
+
+                    <div class="price">
+                        ₹15,499
+                    </div>
+
+                    <button class="add-cart">
+                        Add to Cart
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <div class="product">
+
+                <div class="product-image">
+                    🔌
+                </div>
+
+                <div class="product-info">
+
+                    <h3>
+                        DC Solar Cable 6 Sqmm
+                    </h3>
+
+                    <div class="rating">
+                        ⭐ 4.5 (41)
+                    </div>
+
+                    <div class="price">
+                        ₹1,299
+                    </div>
+
+                    <button class="add-cart">
+                        Add to Cart
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- WHY SOLAR CARE -->
+
+    <div class="section">
+
+        <div class="section-head">
+
+            <h2>Why Choose Solar Care?</h2>
+
+        </div>
+
+
+        <div class="why-us">
+
+            <div class="why">
+                <div class="why-icon">🛡️</div>
+                <p>Trusted Service</p>
+            </div>
+
+            <div class="why">
+                <div class="why-icon">🛠️</div>
+                <p>Expert Technicians</p>
+            </div>
+
+            <div class="why">
+                <div class="why-icon">💳</div>
+                <p>Secure Payments</p>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- SUPPORT -->
+
+    <div class="support">
+
+        <h2>
+            Need Help?
+        </h2>
+
+        <p>
+            Our solar experts are ready
+            to help you with your solar system.
+        </p>
+
+
+        <div class="support-buttons">
+
+            <button class="call"
+                    onclick="callSupport()">
+                📞 Call
+            </button>
+
+            <button class="whatsapp"
+                    onclick="whatsappSupport()">
+                💬 WhatsApp
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- FOOTER -->
+
+    <div class="footer">
+
+        ☀️ Solar Care
+
+        <br><br>
+
+        Clean Energy • Better Future
+
+        <br>
+
+        © 2026 Solar Care
+
+    </div>
+
+
+    <!-- BOTTOM NAV -->
+
+    <div class="bottom-nav">
+
+        <div class="nav-item active"
+             onclick="window.location.href='index.html'">
+
+            <span class="nav-icon">⌂</span>
+            Home
+
+        </div>
+
+
+        <div class="nav-item">
+
+            <span class="nav-icon">▦</span>
+            Categories
+
+        </div>
+
+
+        <div class="nav-item">
+
+            <span class="nav-icon">🛒</span>
+            Cart
+
+        </div>
+
+
+        <div class="nav-item"
+             onclick="window.location.href='track-booking.html'">
+
+            <span class="nav-icon">📦</span>
+            Orders
+
+        </div>
+
+
+        <div class="nav-item"
+             onclick="window.location.href='login.html'">
+
+            <span class="nav-icon">👤</span>
+            Profile
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    function callSupport() {
+
+        window.location.href =
+            "tel:+918527148407";
+
+    }
+
+
+    function whatsappSupport() {
+
+        window.location.href =
+            "https://wa.me/918527148407";
+
+    }
+
+</script>
 
 
 </body>
