@@ -423,7 +423,7 @@
 
 <script>
 
-function placeOrder() {
+async function placeOrder() {
 
     const name =
         document.getElementById("name").value.trim();
@@ -440,25 +440,88 @@ function placeOrder() {
     const pincode =
         document.getElementById("pincode").value.trim();
 
+    const paymentMethod =
+        document.querySelector('input[name="payment"]:checked')?.value || "UPI";
 
-    if (!name ||
-        !mobile ||
-        !address ||
-        !city ||
-        !pincode) {
 
-        alert(
-            "Please fill all delivery details."
-        );
+    // CHECK DELIVERY DETAILS
+    if (!name || !mobile || !address || !city || !pincode) {
+
+        alert("Please fill all delivery details.");
 
         return;
-
     }
 
 
-    window.location.href =
-        "order-success.html";
+    // ORDER DATA
+    const orderData = {
 
+        productName: "Loom Solar 550W Panel",
+
+        quantity: 1,
+
+        price: 18999,
+
+        totalAmount: 18999,
+
+        customer: {
+            name: name,
+            mobile: mobile,
+            address: address,
+            city: city,
+            pincode: pincode
+        },
+
+        paymentMethod: paymentMethod,
+
+        status: "confirmed"
+    };
+
+
+    try {
+
+        const response = await fetch("/api/product-orders", {
+
+            method: "POST",
+
+            headers: {
+                "Content-Type": "application/json"
+            },
+
+            body: JSON.stringify(orderData)
+
+        });
+
+
+        const data = await response.json();
+
+
+        if (!response.ok || !data.success) {
+
+            alert(
+                data.message ||
+                "Order save nahi ho paaya."
+            );
+
+            return;
+        }
+
+
+        // ORDER SUCCESS PAGE
+        window.location.href =
+            "order-success.html";
+
+    } catch (error) {
+
+        console.error(
+            "Place order error:",
+            error
+        );
+
+        alert(
+            "Server error. Please try again."
+        );
+    }
 }
 
 </script>
