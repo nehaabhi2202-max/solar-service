@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Success | Solar Care</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f8f5;
+        }
+
+        .app {
+            max-width: 430px;
+            margin: auto;
+            min-height: 100vh;
+            background: white;
+            text-align: center;
+        }
+
+        .header {
+            background: #0755c9;
+            color: white;
+            padding: 25px 20px;
+            text-align: left;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .success {
+            padding: 50px 25px;
+        }
+
+        .check {
+            width: 90px;
+            height: 90px;
+            margin: auto;
+            border-radius: 50%;
+            background: #20a653;
+            color: white;
+            font-size: 55px;
+            line-height: 90px;
+        }
+
+        h2 {
+            margin-top: 25px;
+            color: #222;
+        }
+
+        .message {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .order-box {
+            margin-top: 25px;
+            padding: 20px;
+            background: #f5f8ff;
+            border-radius: 15px;
+            text-align: left;
+        }
+
+        .order-box p {
+            margin: 10px 0;
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            margin-top: 25px;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            background: #0755c9;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .btn.secondary {
+            background: white;
+            color: #0755c9;
+            border: 1px solid #0755c9;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="app">
+
+    <div class="header">
+        <h1>☀️ Solar Care</h1>
+    </div>
+
+    <div class="success">
+
+        <div class="check">✓</div>
+
+        <h2>Order Placed Successfully!</h2>
+
+        <p class="message">
+            Thank you for choosing Solar Care.
+            Your order has been successfully placed.
+        </p>
+
+        <div class="order-box">
+
+            <p>
+                <strong>Order ID:</strong>
+                SC123456
+            </p>
+
+            <p>
+                <strong>Payment:</strong>
+                Successful
+            </p>
+
+            <p>
+                <strong>Status:</strong>
+                Order Confirmed
+            </p>
+
+        </div>
+
+        <button
+            class="btn"
+            onclick="window.location.href='my-services.html'">
+
+            View My Orders
+
+        </button>
+
+        <button
+            class="btn secondary"
+            onclick="window.location.href='index.html'">
+
+            Continue Shopping
+
+        </button>
+
+    </div>
+
+</div>
+
+</body>
+</html>
