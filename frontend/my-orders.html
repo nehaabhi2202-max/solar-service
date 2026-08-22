@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>My Orders | Solar Care</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f8f5;
+        }
+
+        .app {
+            max-width: 430px;
+            min-height: 100vh;
+            margin: auto;
+            background: #fff;
+        }
+
+        .header {
+            background: #0755c9;
+            color: white;
+            padding: 22px 20px;
+        }
+
+        .back {
+            font-size: 15px;
+            margin-bottom: 15px;
+            cursor: pointer;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 25px;
+        }
+
+        .subtitle {
+            margin-top: 6px;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 18px;
+        }
+
+        .order-card {
+            background: white;
+            border-radius: 16px;
+            padding: 18px;
+            margin-bottom: 18px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+            border: 1px solid #eee;
+        }
+
+        .order-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .order-id {
+            font-weight: bold;
+            color: #222;
+        }
+
+        .status {
+            background: #dff7e6;
+            color: #16823b;
+            padding: 6px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .product {
+            display: flex;
+            gap: 14px;
+            align-items: center;
+            margin-bottom: 18px;
+        }
+
+        .product-image {
+            width: 75px;
+            height: 75px;
+            border-radius: 12px;
+            background: #f1f6ff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 38px;
+        }
+
+        .product-info h3 {
+            margin: 0 0 7px;
+            font-size: 17px;
+        }
+
+        .product-info p {
+            margin: 4px 0;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .details {
+            border-top: 1px solid #eee;
+            padding-top: 14px;
+        }
+
+        .row {
+            display: flex;
+            justify-content: space-between;
+            margin: 9px 0;
+            font-size: 14px;
+        }
+
+        .label {
+            color: #777;
+        }
+
+        .value {
+            font-weight: 600;
+            color: #222;
+            text-align: right;
+        }
+
+        .total {
+            font-size: 18px;
+            color: #0755c9;
+        }
+
+        .track-btn {
+            width: 100%;
+            margin-top: 15px;
+            padding: 13px;
+            border: none;
+            border-radius: 9px;
+            background: #0755c9;
+            color: white;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .shop-btn {
+            width: 100%;
+            padding: 13px;
+            border: 1px solid #0755c9;
+            border-radius: 9px;
+            background: white;
+            color: #0755c9;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 50px 20px;
+            color: #777;
+        }
+
+        .empty-icon {
+            font-size: 55px;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="app">
+
+    <div class="header">
+
+        <div class="back"
+             onclick="window.location.href='index.html'">
+            ← Back
+        </div>
+
+        <h1>📦 My Orders</h1>
+
+        <div class="subtitle">
+            Your product orders
+        </div>
+
+    </div>
+
+
+    <div class="content">
+
+        <!-- ORDER -->
+
+        <div class="order-card">
+
+            <div class="order-top">
+
+                <div class="order-id">
+                    Order #SC123456
+                </div>
+
+                <div class="status">
+                    Confirmed
+                </div>
+
+            </div>
+
+
+            <div class="product">
+
+                <div class="product-image">
+                    ☀️
+                </div>
+
+                <div class="product-info">
+
+                    <h3>
+                        Loom Solar 550W Panel
+                    </h3>
+
+                    <p>
+                        Qty: 1
+                    </p>
+
+                    <p>
+                        Solar Panel
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="details">
+
+                <div class="row">
+
+                    <span class="label">
+                        Order Date
+                    </span>
+
+                    <span class="value">
+                        22 Aug 2026
+                    </span>
+
+                </div>
+
+
+                <div class="row">
+
+                    <span class="label">
+                        Payment
+                    </span>
+
+                    <span class="value">
+                        ✅ Successful
+                    </span>
+
+                </div>
+
+
+                <div class="row">
+
+                    <span class="label">
+                        Delivery
+                    </span>
+
+                    <span class="value">
+                        3–5 Days
+                    </span>
+
+                </div>
+
+
+                <div class="row">
+
+                    <span class="label">
+                        Total Amount
+                    </span>
+
+                    <span class="value total">
+                        ₹18,999
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <button
+                class="track-btn"
+                onclick="trackOrder()">
+
+                🚚 Track Order
+
+            </button>
+
+        </div>
+
+
+        <!-- SHOP MORE -->
+
+        <button
+            class="shop-btn"
+            onclick="window.location.href='index.html'">
+
+            🛍️ Continue Shopping
+
+        </button>
+
+    </div>
+
+</div>
+
+
+<script>
+
+function trackOrder() {
+
+    alert(
+        "Order #SC123456\n\n" +
+        "Status: Confirmed\n" +
+        "Your order will be dispatched soon."
+    );
+
+}
+
+</script>
+
+</body>
+
+</html>
