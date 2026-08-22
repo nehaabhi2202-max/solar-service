@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Product Details | Solar Care</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f5f8f6;
+            color: #17251d;
+        }
+
+        .product-page {
+            max-width: 520px;
+            margin: auto;
+            background: white;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: #0757c9;
+            color: white;
+            padding: 18px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .back {
+            font-size: 25px;
+            cursor: pointer;
+        }
+
+        .header-title {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .product-image {
+            height: 300px;
+            background: #f4f8fc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 130px;
+        }
+
+        .details {
+            padding: 22px;
+        }
+
+        .details h1 {
+            font-size: 23px;
+            margin: 0 0 10px;
+        }
+
+        .rating {
+            color: #f5a623;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        .price {
+            font-size: 25px;
+            font-weight: bold;
+        }
+
+        .old-price {
+            font-size: 14px;
+            color: #999;
+            text-decoration: line-through;
+            margin-left: 8px;
+        }
+
+        .offer {
+            display: inline-block;
+            margin-top: 8px;
+            padding: 5px 9px;
+            background: #e5f7ea;
+            color: #14863e;
+            border-radius: 5px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .line {
+            height: 1px;
+            background: #e8ece9;
+            margin: 22px 0;
+        }
+
+        .details h2 {
+            font-size: 18px;
+        }
+
+        .features {
+            padding: 0;
+            list-style: none;
+        }
+
+        .features li {
+            padding: 8px 0;
+            font-size: 14px;
+            color: #59635d;
+        }
+
+        .quantity {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 20px 0;
+        }
+
+        .qty-box {
+            display: flex;
+            align-items: center;
+            border: 1px solid #d9dfdb;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .qty-box button {
+            border: none;
+            background: white;
+            width: 38px;
+            height: 38px;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .qty-number {
+            width: 35px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .buttons button {
+            flex: 1;
+            padding: 14px;
+            border-radius: 9px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .cart-btn {
+            background: white;
+            border: 1px solid #0757c9;
+            color: #0757c9;
+        }
+
+        .buy-btn {
+            background: #0757c9;
+            border: 1px solid #0757c9;
+            color: white;
+        }
+
+        .message {
+            display: none;
+            margin-top: 15px;
+            padding: 12px;
+            background: #e8f7ed;
+            color: #147a39;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 13px;
+        }
+    </style>
+</head>
+
+
+<body>
+
+<div class="product-page">
+
+    <!-- HEADER -->
+
+    <div class="header">
+
+        <div class="back"
+             onclick="goBack()">
+            ‹
+        </div>
+
+        <div class="header-title">
+            Product Details
+        </div>
+
+    </div>
+
+
+    <!-- PRODUCT IMAGE -->
+
+    <div class="product-image">
+        ☀️
+    </div>
+
+
+    <!-- PRODUCT DETAILS -->
+
+    <div class="details">
+
+        <h1>
+            Loom Solar 550W Panel
+        </h1>
+
+        <div class="rating">
+            ⭐ 4.8 &nbsp; (120 Reviews)
+        </div>
+
+
+        <div class="price">
+            ₹18,999
+
+            <span class="old-price">
+                ₹22,999
+            </span>
+        </div>
+
+
+        <div class="offer">
+            17% OFF
+        </div>
+
+
+        <div class="line"></div>
+
+
+        <h2>
+            Key Features
+        </h2>
+
+
+        <ul class="features">
+
+            <li>✓ High module conversion efficiency</li>
+
+            <li>✓ PID resistant technology</li>
+
+            <li>✓ Long performance warranty</li>
+
+            <li>✓ Suitable for all weather conditions</li>
+
+            <li>✓ Suitable for homes & businesses</li>
+
+        </ul>
+
+
+        <div class="line"></div>
+
+
+        <!-- QUANTITY -->
+
+        <div class="quantity">
+
+            <strong>
+                Quantity
+            </strong>
+
+            <div class="qty-box">
+
+                <button onclick="decreaseQty()">
+                    −
+                </button>
+
+                <div class="qty-number"
+                     id="quantity">
+                    1
+                </div>
+
+                <button onclick="increaseQty()">
+                    +
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- BUTTONS -->
+
+        <div class="buttons">
+
+            <button class="cart-btn"
+                    onclick="addToCart()">
+
+                🛒 Add to Cart
+
+            </button>
+
+
+            <button class="buy-btn"
+                    onclick="buyNow()">
+
+                Buy Now
+
+            </button>
+
+        </div>
+
+
+        <div class="message"
+             id="message">
+
+            ✓ Product added to cart!
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    let quantity = 1;
+
+
+    function increaseQty() {
+
+        quantity++;
+
+        document.getElementById("quantity").innerText =
+            quantity;
+
+    }
+
+
+    function decreaseQty() {
+
+        if (quantity > 1) {
+
+            quantity--;
+
+            document.getElementById("quantity").innerText =
+                quantity;
+
+        }
+
+    }
+
+
+    function addToCart() {
+
+        localStorage.setItem(
+            "solarCartProduct",
+            JSON.stringify({
+                name: "Loom Solar 550W Panel",
+                price: 18999,
+                quantity: quantity
+            })
+        );
+
+        document.getElementById("message").style.display =
+            "block";
+
+    }
+
+
+    function buyNow() {
+
+        addToCart();
+
+        setTimeout(function () {
+
+            alert("Proceeding to checkout...");
+
+        }, 300);
+
+    }
+
+
+    function goBack() {
+
+        window.location.href = "index.html";
+
+    }
+
+</script>
+
+
+</body>
+
+</html>
