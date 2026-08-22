@@ -326,6 +326,129 @@
     </div>
 
 </div>
+<script>
 
+async function loadOrderStatus() {
+
+    try {
+
+        // URL se order ID lena
+        const params = new URLSearchParams(window.location.search);
+        const orderId = params.get("id");
+
+        if (!orderId) {
+            console.log("Order ID not found");
+            return;
+        }
+
+        // Saare product orders fetch karna
+        const response = await fetch("/api/product-orders");
+
+        const data = await response.json();
+
+        if (!data.success || !data.orders) {
+            console.log("Orders load nahi hue");
+            return;
+        }
+
+        // Current order find karna
+        const order = data.orders.find(
+            item => String(item._id) === String(orderId)
+        );
+
+        if (!order) {
+            console.log("Order not found");
+            return;
+        }
+
+        console.log("Current order:", order);
+
+        // Database status
+        const status =
+            String(order.status || "confirmed").toLowerCase();
+
+        // Saare timeline steps
+        const steps =
+            document.querySelectorAll(".timeline .step");
+
+        // Status ke according last completed step
+        let currentStep = 0;
+
+        if (status === "confirmed") {
+            currentStep = 0;
+        }
+
+        else if (status === "packed") {
+            currentStep = 1;
+        }
+
+        else if (status === "shipped") {
+            currentStep = 2;
+        }
+
+        else if (
+            status === "out for delivery" ||
+            status === "out_for_delivery"
+        ) {
+            currentStep = 3;
+        }
+
+        else if (status === "delivered") {
+            currentStep = 4;
+        }
+
+        // Timeline update
+        steps.forEach((step, index) => {
+
+            if (index <= currentStep) {
+                step.classList.add("active");
+            } else {
+                step.classList.remove("active");
+            }
+
+        });
+
+        // Top status update
+        const statusBox =
+            document.querySelector(".status");
+
+        if (statusBox) {
+
+            const statusText = {
+                confirmed: "✓ Order Confirmed",
+                packed: "📦 Order Packed",
+                shipped: "🚚 Shipped",
+                "out for delivery": "🛵 Out for Delivery",
+                out_for_delivery: "🛵 Out for Delivery",
+                delivered: "🎉 Delivered"
+            };
+
+            statusBox.textContent =
+                statusText[status] || "✓ Order Confirmed";
+        }
+
+    } catch (error) {
+
+        console.error(
+            "Track order error:",
+            error
+        );
+
+    }
+
+}
+
+
+// Page open hote hi status load karo
+loadOrderStatus();
+
+
+// Har 10 second me status check karo
+setInterval(
+    loadOrderStatus,
+    10000
+);
+
+</script>
 </body>
 </html>
