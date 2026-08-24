@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Categories | Solar Service</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        .categories-page {
+            max-width: 520px;
+            margin: auto;
+            padding: 20px;
+        }
+
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 14px;
+            margin-top: 20px;
+        }
+
+        .category-card {
+            background: white;
+            border: 1px solid #e5ebe7;
+            border-radius: 16px;
+            padding: 25px 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .category-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        .category-icon {
+            font-size: 45px;
+            margin-bottom: 12px;
+        }
+
+        .category-card h3 {
+            margin: 0;
+            font-size: 15px;
+        }
+
+        .category-card p {
+            margin: 7px 0 0;
+            color: #68736c;
+            font-size: 12px;
+        }
+
+        .back-btn {
+            width: 100%;
+            margin-top: 20px;
+            padding: 12px;
+            border: 1px solid #0757c9;
+            background: white;
+            color: #0757c9;
+            border-radius: 9px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+
+<body>
+
+<div class="app">
+
+    <div class="categories-page">
+
+        <div class="logo">
+            ☀️ Solar Service
+        </div>
+
+        <p class="subtitle">
+            Shop by Category
+        </p>
+
+
+        <div class="category-grid">
+
+            <div class="category-card"
+                 onclick="showProducts('Solar Panels')">
+
+                <div class="category-icon">☀️</div>
+
+                <h3>
+                    Solar Panels
+                </h3>
+
+                <p>
+                    Solar panels & modules
+                </p>
+
+            </div>
+
+
+            <div class="category-card"
+                 onclick="showProducts('Inverters')">
+
+                <div class="category-icon">⚡</div>
+
+                <h3>
+                    Inverters
+                </h3>
+
+                <p>
+                    Solar inverters
+                </p>
+
+            </div>
+
+
+            <div class="category-card"
+                 onclick="showProducts('Batteries')">
+
+                <div class="category-icon">🔋</div>
+
+                <h3>
+                    Batteries
+                </h3>
+
+                <p>
+                    Solar batteries
+                </p>
+
+            </div>
+
+
+            <div class="category-card"
+                 onclick="showProducts('Accessories')">
+
+                <div class="category-icon">🔌</div>
+
+                <h3>
+                    Accessories
+                </h3>
+
+                <p>
+                    Cables & accessories
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <button
+            class="back-btn"
+            onclick="window.location.href='index.html'">
+
+            🏠 Back to Home
+
+        </button>
+
+    </div>
+
+</div>
+
+
+<script>
+
+function showProducts(category) {
+
+    localStorage.setItem(
+        "selectedCategory",
+        category
+    );
+
+    window.location.href =
+        "index.html#products";
+}
+
+</script>
+
+</body>
+
+</html>
