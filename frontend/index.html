@@ -611,6 +611,7 @@
         <!-- PRODUCT 1 -->
 
         <div class="product"
+        data-category="Solar Panels"
              onclick="window.location.href='product-details.html'"
              style="cursor:pointer;">
 
@@ -649,7 +650,8 @@
 
         <!-- PRODUCT 2 -->
 
-        <div class="product">
+        <div class="product"
+            data-category="Inverters">
 
             <div class="product-image">
                 ⚡
@@ -685,7 +687,8 @@
 
         <!-- PRODUCT 3 -->
 
-        <div class="product">
+        <div class="product"
+            data-category="Batteries">
 
             <div class="product-image">
                 🔋
@@ -717,11 +720,12 @@
 
         <!-- PRODUCT 4 -->
 
-        <div class="product">
+        <div class="product"
+     data-category="Accessories">
 
-            <div class="product-image">
-                🔌
-            </div>
+    <div class="product-image">
+        🔌
+    </div>
 
             <div class="product-info">
 
@@ -935,6 +939,39 @@ function addProductToCart(name, price, icon) {
 
     window.location.href = "cart.html";
 }
+<script>
+
+function filterProductsByCategory() {
+
+    const category =
+        localStorage.getItem("selectedCategory");
+
+    if (!category) {
+        return;
+    }
+
+    const products =
+        document.querySelectorAll(".product");
+
+    products.forEach(product => {
+
+        const productCategory =
+            product.getAttribute("data-category");
+
+        if (productCategory === category) {
+            product.style.display = "";
+        } else {
+            product.style.display = "none";
+        }
+
+    });
+
+}
+
+document.addEventListener(
+    "DOMContentLoaded",
+    filterProductsByCategory
+);
 
 </script>
 </body>
