@@ -3,11 +3,9 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
-
-    <title>Customer Account | Solar Service</title>
+    <title>Customer Account | Solar Care</title>
 
     <link rel="stylesheet" href="style.css">
 
@@ -51,6 +49,39 @@
             border-radius: 8px;
         }
 
+        .primary-btn {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background: #0755c9;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .secondary-btn {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #0755c9;
+            border-radius: 8px;
+            background: white;
+            color: #0755c9;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        #otpSection {
+            display: none;
+            margin-top: 20px;
+        }
+
+        #recaptcha-container {
+            margin: 15px 0;
+        }
+
         .message {
             margin-top: 15px;
             padding: 10px;
@@ -70,6 +101,13 @@
             background: #fff0f0;
             color: #c62828;
         }
+
+        .timer {
+            text-align: center;
+            margin-top: 10px;
+            color: #666;
+            font-size: 14px;
+        }
     </style>
 </head>
 
@@ -78,7 +116,7 @@
 <div class="app">
 
     <div class="logo">
-        ☀️ Solar Service
+        ☀️ Solar Care
     </div>
 
     <p class="subtitle">
@@ -118,7 +156,7 @@
             <h2>📱 Customer Login</h2>
 
             <p>
-                Enter your registered mobile number.
+                Enter your mobile number to receive OTP.
             </p>
 
             <input
@@ -127,9 +165,36 @@
                 placeholder="10-digit mobile number"
                 maxlength="10">
 
-            <button onclick="loginCustomer()">
-                🔐 Login
+            <div id="recaptcha-login"></div>
+
+            <button
+                id="sendLoginOtpBtn"
+                class="primary-btn"
+                onclick="sendLoginOTP()">
+
+                📲 Send OTP
+
             </button>
+
+            <div id="loginOtpSection" style="display:none; margin-top:20px;">
+
+                <input
+                    type="tel"
+                    id="loginOtp"
+                    placeholder="Enter 6-digit OTP"
+                    maxlength="6">
+
+                <button
+                    class="primary-btn"
+                    onclick="verifyLoginOTP()">
+
+                    ✅ Verify OTP
+
+                </button>
+
+                <div id="loginTimer" class="timer"></div>
+
+            </div>
 
         </div>
 
@@ -151,23 +216,48 @@
                 placeholder="10-digit mobile number"
                 maxlength="10">
 
-            <button onclick="signupCustomer()">
-                📝 Create Account
+            <div id="recaptcha-signup"></div>
+
+            <button
+                id="sendSignupOtpBtn"
+                class="primary-btn"
+                onclick="sendSignupOTP()">
+
+                📲 Send OTP
+
             </button>
+
+            <div id="signupOtpSection" style="display:none; margin-top:20px;">
+
+                <input
+                    type="tel"
+                    id="signupOtp"
+                    placeholder="Enter 6-digit OTP"
+                    maxlength="6">
+
+                <button
+                    class="primary-btn"
+                    onclick="verifySignupOTP()">
+
+                    ✅ Verify & Create Account
+
+                </button>
+
+                <div id="signupTimer" class="timer"></div>
+
+            </div>
 
         </div>
 
 
         <!-- MESSAGE -->
 
-        <div id="message"
-             class="message">
-        </div>
-
+        <div id="message" class="message"></div>
 
         <br>
 
         <button
+            class="secondary-btn"
             onclick="window.location.href='index.html'">
 
             🏠 Back to Home
@@ -179,265 +269,616 @@
 </div>
 
 
-<script>
+<!-- FIREBASE -->
 
-function showLogin() {
+<script type="module">
 
-    document
-        .getElementById("loginForm")
-        .classList.add("active");
+    import { initializeApp }
+        from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
 
-    document
-        .getElementById("signupForm")
-        .classList.remove("active");
-
-    document
-        .getElementById("loginTab")
-        .classList.add("active");
-
-    document
-        .getElementById("signupTab")
-        .classList.remove("active");
-
-    clearMessage();
-}
-
-
-function showSignup() {
-
-    document
-        .getElementById("signupForm")
-        .classList.add("active");
-
-    document
-        .getElementById("loginForm")
-        .classList.remove("active");
-
-    document
-        .getElementById("signupTab")
-        .classList.add("active");
-
-    document
-        .getElementById("loginTab")
-        .classList.remove("active");
-
-    clearMessage();
-}
-
-
-function showMessage(message, type) {
-
-    const box =
-        document.getElementById("message");
-
-    box.textContent = message;
-
-    box.className =
-        "message " + type;
-}
-
-
-function clearMessage() {
-
-    const box =
-        document.getElementById("message");
-
-    box.textContent = "";
-
-    box.className = "message";
-}
-
-
-async function signupCustomer() {
-
-    const name =
-        document
-            .getElementById("signupName")
-            .value
-            .trim();
-
-    const phone =
-        document
-            .getElementById("signupPhone")
-            .value
-            .trim();
-
-
-    if (!name) {
-
-        showMessage(
-            "Please enter your name.",
-            "error"
-        );
-
-        return;
+    import {
+        getAuth,
+        RecaptchaVerifier,
+        signInWithPhoneNumber
     }
+        from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 
 
-    if (!/^[0-9]{10}$/.test(phone)) {
+    // YOUR FIREBASE CONFIG
 
-        showMessage(
-            "Please enter a valid 10-digit mobile number.",
-            "error"
-        );
+    const firebaseConfig = {
 
-        return;
-    }
+        apiKey: "AIzaSyCy_YiJRk18HVzfSFb7yGBYWy2LMjJppLI",
 
+        authDomain:
+            "solar-service-dd68d.firebaseapp.com",
 
-    try {
+        projectId:
+            "solar-service-dd68d",
 
-        const response =
-            await fetch("/api/customers/signup", {
+        storageBucket:
+            "solar-service-dd68d.firebasestorage.app",
 
-                method: "POST",
+        messagingSenderId:
+            "815369742562",
 
-                headers: {
-                    "Content-Type": "application/json"
-                },
+        appId:
+            "1:815369742562:web:50b10a955e5dc0868556bb",
 
-                body: JSON.stringify({
-                    name: name,
-                    phone: phone
-                })
+        measurementId:
+            "G-XMVYT4PQSV"
 
-            });
+    };
 
 
-        const data =
-            await response.json();
+    const app = initializeApp(firebaseConfig);
+
+    const auth = getAuth(app);
 
 
-        if (!data.success) {
+    let loginConfirmationResult = null;
+    let signupConfirmationResult = null;
+
+    let loginRecaptcha = null;
+    let signupRecaptcha = null;
+
+
+    // =========================
+    // MESSAGE
+    // =========================
+
+    window.showMessage = function(message, type) {
+
+        const box =
+            document.getElementById("message");
+
+        box.textContent = message;
+
+        box.className =
+            "message " + type;
+
+    };
+
+
+    window.clearMessage = function() {
+
+        const box =
+            document.getElementById("message");
+
+        box.textContent = "";
+
+        box.className = "message";
+
+    };
+
+
+    // =========================
+    // TABS
+    // =========================
+
+    window.showLogin = function() {
+
+        document
+            .getElementById("loginForm")
+            .classList.add("active");
+
+        document
+            .getElementById("signupForm")
+            .classList.remove("active");
+
+        document
+            .getElementById("loginTab")
+            .classList.add("active");
+
+        document
+            .getElementById("signupTab")
+            .classList.remove("active");
+
+        clearMessage();
+
+    };
+
+
+    window.showSignup = function() {
+
+        document
+            .getElementById("signupForm")
+            .classList.add("active");
+
+        document
+            .getElementById("loginForm")
+            .classList.remove("active");
+
+        document
+            .getElementById("signupTab")
+            .classList.add("active");
+
+        document
+            .getElementById("loginTab")
+            .classList.remove("active");
+
+        clearMessage();
+
+    };
+
+
+    // =========================
+    // LOGIN OTP
+    // =========================
+
+    window.sendLoginOTP = async function() {
+
+        const phone =
+            document
+                .getElementById("loginPhone")
+                .value
+                .trim();
+
+
+        if (!/^[0-9]{10}$/.test(phone)) {
 
             showMessage(
-                data.message || "Signup failed.",
+                "Please enter a valid 10-digit mobile number.",
                 "error"
             );
 
             return;
+
         }
 
 
-        localStorage.setItem(
-            "customerPhone",
-            phone
-        );
+        try {
+
+            if (!loginRecaptcha) {
+
+                loginRecaptcha =
+                    new RecaptchaVerifier(
+                        auth,
+                        "recaptcha-login",
+                        {
+                            size: "normal"
+                        }
+                    );
+
+            }
 
 
-        showMessage(
-            "✅ Account created successfully!",
-            "success"
-        );
+            const fullPhone =
+                "+91" + phone;
 
 
-        setTimeout(() => {
-
-            window.location.href =
-                "my-services.html";
-
-        }, 700);
-
-
-    } catch (error) {
-
-        console.error(error);
-
-        showMessage(
-            "Server error. Please try again.",
-            "error"
-        );
-
-    }
-
-}
+            loginConfirmationResult =
+                await signInWithPhoneNumber(
+                    auth,
+                    fullPhone,
+                    loginRecaptcha
+                );
 
 
-async function loginCustomer() {
+            document
+                .getElementById("loginOtpSection")
+                .style.display = "block";
 
-    const phone =
-        document
-            .getElementById("loginPhone")
-            .value
-            .trim();
-
-
-    if (!/^[0-9]{10}$/.test(phone)) {
-
-        showMessage(
-            "Please enter a valid 10-digit mobile number.",
-            "error"
-        );
-
-        return;
-    }
-
-
-    try {
-
-        const response =
-    await fetch("/api/customers/login", {
-
-        method: "POST",
-
-        headers: {
-            "Content-Type": "application/json"
-        },
-
-        body: JSON.stringify({
-            phone: phone
-        })
-
-    });
-
-
-        const data =
-            await response.json();
-
-
-        if (!data.success) {
 
             showMessage(
-                data.message || "Account not found.",
+                "✅ OTP sent to your mobile number.",
+                "success"
+            );
+
+
+            startTimer(
+                "loginTimer"
+            );
+
+
+        } catch (error) {
+
+            console.error(error);
+
+            showMessage(
+                "OTP send failed: " +
+                error.message,
+                "error"
+            );
+
+        }
+
+    };
+
+
+    // =========================
+    // VERIFY LOGIN OTP
+    // =========================
+
+    window.verifyLoginOTP = async function() {
+
+        const otp =
+            document
+                .getElementById("loginOtp")
+                .value
+                .trim();
+
+
+        if (!/^[0-9]{6}$/.test(otp)) {
+
+            showMessage(
+                "Please enter the 6-digit OTP.",
                 "error"
             );
 
             return;
+
         }
 
 
-        localStorage.setItem(
-            "customerPhone",
-            phone
-        );
+        if (!loginConfirmationResult) {
+
+            showMessage(
+                "Please request OTP first.",
+                "error"
+            );
+
+            return;
+
+        }
 
 
-        showMessage(
-            "✅ Login successful!",
-            "success"
-        );
+        try {
+
+            const result =
+                await loginConfirmationResult.confirm(otp);
 
 
-        setTimeout(() => {
-
-            window.location.href =
-                "my-services.html";
-
-        }, 500);
+            const user =
+                result.user;
 
 
-    } catch (error) {
+            const phone =
+                user.phoneNumber.replace("+91", "");
 
-        console.error(error);
 
-        showMessage(
-            "Server error. Please try again.",
-            "error"
-        );
+            // Check customer in MongoDB
+
+            const response =
+                await fetch(
+                    "/api/customers/login",
+                    {
+
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body: JSON.stringify({
+                            phone: phone
+                        })
+
+                    }
+                );
+
+
+            const data =
+                await response.json();
+
+
+            if (!data.success) {
+
+                showMessage(
+                    data.message ||
+                    "Account not found. Please Sign Up first.",
+                    "error"
+                );
+
+                return;
+
+            }
+
+
+            localStorage.setItem(
+                "customerPhone",
+                phone
+            );
+
+
+            localStorage.setItem(
+                "firebaseUid",
+                user.uid
+            );
+
+
+            showMessage(
+                "✅ OTP verified. Login successful!",
+                "success"
+            );
+
+
+            setTimeout(() => {
+
+                window.location.href =
+                    "my-services.html";
+
+            }, 700);
+
+
+        } catch (error) {
+
+            console.error(error);
+
+            showMessage(
+                "Invalid OTP. Please try again.",
+                "error"
+            );
+
+        }
+
+    };
+
+
+    // =========================
+    // SIGNUP OTP
+    // =========================
+
+    window.sendSignupOTP = async function() {
+
+        const name =
+            document
+                .getElementById("signupName")
+                .value
+                .trim();
+
+        const phone =
+            document
+                .getElementById("signupPhone")
+                .value
+                .trim();
+
+
+        if (!name) {
+
+            showMessage(
+                "Please enter your name.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        if (!/^[0-9]{10}$/.test(phone)) {
+
+            showMessage(
+                "Please enter a valid 10-digit mobile number.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        try {
+
+            if (!signupRecaptcha) {
+
+                signupRecaptcha =
+                    new RecaptchaVerifier(
+                        auth,
+                        "recaptcha-signup",
+                        {
+                            size: "normal"
+                        }
+                    );
+
+            }
+
+
+            const fullPhone =
+                "+91" + phone;
+
+
+            signupConfirmationResult =
+                await signInWithPhoneNumber(
+                    auth,
+                    fullPhone,
+                    signupRecaptcha
+                );
+
+
+            document
+                .getElementById("signupOtpSection")
+                .style.display = "block";
+
+
+            showMessage(
+                "✅ OTP sent to your mobile number.",
+                "success"
+            );
+
+
+            startTimer(
+                "signupTimer"
+            );
+
+
+        } catch (error) {
+
+            console.error(error);
+
+            showMessage(
+                "OTP send failed: " +
+                error.message,
+                "error"
+            );
+
+        }
+
+    };
+
+
+    // =========================
+    // VERIFY SIGNUP OTP
+    // =========================
+
+    window.verifySignupOTP = async function() {
+
+        const otp =
+            document
+                .getElementById("signupOtp")
+                .value
+                .trim();
+
+
+        if (!/^[0-9]{6}$/.test(otp)) {
+
+            showMessage(
+                "Please enter the 6-digit OTP.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        try {
+
+            const result =
+                await signupConfirmationResult.confirm(otp);
+
+
+            const user =
+                result.user;
+
+
+            const phone =
+                user.phoneNumber.replace("+91", "");
+
+
+            const name =
+                document
+                    .getElementById("signupName")
+                    .value
+                    .trim();
+
+
+            // Save customer to MongoDB
+
+            const response =
+                await fetch(
+                    "/api/customers/signup",
+                    {
+
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body: JSON.stringify({
+                            name: name,
+                            phone: phone
+                        })
+
+                    }
+                );
+
+
+            const data =
+                await response.json();
+
+
+            if (!data.success) {
+
+                showMessage(
+                    data.message ||
+                    "Account creation failed.",
+                    "error"
+                );
+
+                return;
+
+            }
+
+
+            localStorage.setItem(
+                "customerPhone",
+                phone
+            );
+
+
+            localStorage.setItem(
+                "firebaseUid",
+                user.uid
+            );
+
+
+            showMessage(
+                "🎉 Account created successfully!",
+                "success"
+            );
+
+
+            setTimeout(() => {
+
+                window.location.href =
+                    "my-services.html";
+
+            }, 700);
+
+
+        } catch (error) {
+
+            console.error(error);
+
+            showMessage(
+                "Invalid OTP or account creation failed.",
+                "error"
+            );
+
+        }
+
+    };
+
+
+    // =========================
+    // TIMER
+    // =========================
+
+    function startTimer(elementId) {
+
+        let seconds = 30;
+
+        const element =
+            document.getElementById(elementId);
+
+
+        const interval =
+            setInterval(() => {
+
+                element.textContent =
+                    "You can request another OTP after " +
+                    seconds +
+                    " seconds.";
+
+                seconds--;
+
+
+                if (seconds < 0) {
+
+                    clearInterval(interval);
+
+                    element.textContent =
+                        "You can request OTP again.";
+
+                }
+
+            }, 1000);
 
     }
-
-}
 
 </script>
 
